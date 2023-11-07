@@ -240,6 +240,7 @@ exports.restrict = (...role) => {
 //     next();
 //   };
 // };
+// ṃiddleware
 // -------------------------------------------------------------------------------------------------------------------
 
 exports.getUserById = asyncErrorHanlder(async (req, res, next) => {
