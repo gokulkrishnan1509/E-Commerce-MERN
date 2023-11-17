@@ -25,10 +25,7 @@ const ProductCard = (props) => {
             
          const newPath=   `${
               location.pathname == "/"
-                ? "/product/:id"
-                : location.pathname == "/product/:id"
-                ? "/product/:id"
-                : ":id"
+                ? "/product/:id": location.pathname == "/product/:id"? "/product/:id": ":id"
             }`;
             navigate(newPath)
           }}
