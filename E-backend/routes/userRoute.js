@@ -18,7 +18,14 @@ const {
   updatePassword,
   adminLogin,
   getWishList,
-  saveAddress
+  saveAddress,
+  userCart,
+  getUserCart,
+  emptyCart,
+  applyCoupon,
+  createOrder,
+  getOrders,
+  updateOrderStatus,
 } = require("../controller/userController");
 
 router.route("/post").post(createUser);
@@ -28,13 +35,19 @@ router.route("/reset/:token").patch(resetPassword);
 router.route("/deleteuser/:id").delete(getUserDelete);
 router.route("/cookie").put(handleRefreshToken);
 router.route("/logout").delete(logout);
-router.route("/admin-login").post(adminLogin)
+router.route("/admin-login").post(adminLogin);
 
 // this below url update by authorized user.
 router.route("/updateuser").patch(protect, getUserUpdate);
 router.route("/password-update").patch(protect, updatePassword);
-router.route("/get-wishlist").get(protect,getWishList)
-router.route("/user-address").patch(protect,saveAddress)
+router.route("/get-wishlist").get(protect, getWishList);
+router.route("/user-address").patch(protect, saveAddress);
+router.route("/user-cart").patch(protect, userCart);
+router.route("/user-getcart").get(protect, getUserCart);
+router.route("/empty-user").delete(protect, emptyCart);
+router.route("/apply-coupon").post(protect, applyCoupon);
+router.route("/user-order").post(protect, createOrder);
+router.route("/user-getorder").get(protect, getOrders);
 
 // this below url's will manipulate by admin's
 router
@@ -49,5 +62,8 @@ router
 router
   .route("/fetchall")
   .get(protect, restrict("admin", "super admin"), fetchAllUser);
+router
+  .route("/update-order/:id")
+  .patch(protect, restrict("admin", "super admin"),updateOrderStatus);
 
 module.exports = router;

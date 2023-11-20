@@ -14,7 +14,7 @@ const blogRouter = require("./routes/blogRoutes");
 const categoryRouter = require("./routes/prodCategoryRoutes");
 const blogCategoryRouter = require("./routes/blogCategoryRouter");
 const brandRouter = require("./routes/brandRouter");
-const couponRouter = require("./routes/couponRoutes")
+const couponRouter = require("./routes/couponRoutes");
 const app = express();
 
 mongoose
@@ -36,7 +36,7 @@ app.use("/blog", blogRouter);
 app.use("/category", categoryRouter);
 app.use("/blogcategory", blogCategoryRouter);
 app.use("/brand", brandRouter);
-app.use("/coupon",couponRouter)
+app.use("/coupon", couponRouter);
 
 app.all("*", (req, res, next) => {
   const error = new CustomError(

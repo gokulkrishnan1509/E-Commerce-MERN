@@ -1,15 +1,29 @@
-const asyncErrorHanlder = require("../utils/asyncErrorHandler");
-const userModel = require("../model/userModel");
+// ******************Third party library**************
+
+const uniqueId = require("uniqid");
 const jwt = require("jsonwebtoken");
-const CustomError = require("../utils/customError");
+
+const { default: mongoose } = require("mongoose");
+
+// **********Node Modules *******************************
 const util = require("util");
-const sendEmail = require("../utils/sendEmail");
 const crypto = require("crypto");
+
+// ****************UTILS FILES**************************
+const sendEmail = require("../utils/sendEmail");
 const validateMongoDbId = require("../utils/validateMongooseId");
 const { generateRefreshToken } = require("../utils/refreshToken");
-const { default: mongoose } = require("mongoose");
+const CustomError = require("../utils/customError");
+const asyncErrorHanlder = require("../utils/asyncErrorHandler");
+
+// *********************MODELS************************************
 const productModel = require("../model/productModel");
 const cartModel = require("../model/cartModel");
+const couponModel = require("../model/couponModel");
+const userModel = require("../model/userModel");
+const orderModel = require("../model/orderModel");
+
+// ***************************************************************
 const allowedRoles = ["admin", "super admin"];
 
 const generateToken = (id) => {
@@ -433,25 +447,219 @@ exports.getWishList = asyncErrorHanlder(async (req, res) => {
 
   res.status(200).json({ getBlog: getBlog[0] });
 });
+// **********************************************************************
+exports.userCart = asyncErrorHanlder(async (req, res) => {
+  const { cart } = req.body;
+  const { _id } = req.user;
 
-const userCart = asyncErrorHanlder(async(req,res)=>{
-  const {_id}=req.user;
-  const {cart}=req.body;
-  validateMongoDbId(_id)
+  validateMongoDbId(_id);
+  try {
+    let products = [];
+    const user = await userModel.findById(_id);
 
-  try{
+    const alreadyExistCart = await cartModel.findOne({ orderby: user._id });
 
-    const user = await userArray.findById(_id);
-          
-    //check if user alredy have product in cart 
-    
-    // const alreadyExistCart = aw
-    
+    if (alreadyExistCart) {
+      await cartModel.deleteOne({ _id: alreadyExistCart._id });
+    }
 
+    for (let i = 0; i < cart.length; i++) {
+      let object = {};
+      object.product = cart[i]._id;
+      object.count = cart[i].count;
+      object.color = cart[i].color;
+      const getPrice = await productModel
+        .findById(cart[i]._id)
+        .select("price")
+        .exec();
+      object.price = getPrice.price;
+      products.push(object);
+    }
+    let cartTotal = 0;
 
-  }catch(error){
+    for (let i = 0; i < products.length; i++) {
+      cartTotal += products[i].price * products[i].count;
+    }
 
+    let newCart = await new cartModel({
+      products,
+      cartTotal,
+      orderby: user?._id,
+    }).save();
+    res.status(200).json({ newCart });
+  } catch (error) {}
+});
+
+// **********************************************************************
+exports.getUserCart = asyncErrorHanlder(async (req, res) => {
+  const { _id } = req.user;
+  validateMongoDbId(_id);
+
+  const cart = await cartModel
+    .findOne({ orderby: _id })
+    .populate("products.product");
+  // products is array in cartModel
+  // product is object name inside the product array and it contains product id
+
+  res.status(200).json({ cart });
+});
+
+exports.emptyCart = asyncErrorHanlder(async (req, res, next) => {
+  const { _id } = req.user;
+  validateMongoDbId(_id);
+
+  const user = await userModel.findOne({ _id });
+
+  const cart = await cartModel.findOneAndRemove({ orderby: user._id });
+  if (!cart) {
+    const error = new CustomError("Order not exist", 404);
+    return next(error);
   }
 
-})
+  res.status(200).json({ cart });
+});
+// **********************************************************************
+exports.applyCoupon = asyncErrorHanlder(async (req, res, next) => {
+  const { coupon } = req.body;
+  const { _id } = req.user;
+  validateMongoDbId(_id);
+  const validCoupon = await couponModel.findOne({ name: coupon });
 
+  if (validCoupon == null) {
+    const error = new CustomError("Invalid Coupon", 404);
+    return next(error);
+  }
+  const user = await userModel.findOne({ _id });
+
+  let { cartTotal } = await cartModel
+    .findOne({ orderby: user._id })
+    .populate("products.product");
+  let totalAfterDiscount = (
+    cartTotal -
+    (cartTotal * parseInt(validCoupon.discount)) / 100
+  ).toFixed(2);
+
+  const total = await cartModel.findOneAndUpdate(
+    { orderby: user._id },
+    { totalAfterDiscount },
+    {
+      new: true,
+    }
+  );
+  res.status(200).json({ total });
+});
+// **********************************************************************
+exports.createOrder = asyncErrorHanlder(async (req, res, next) => {
+  const { COD, couponApplied } = req.body;
+  const { _id } = req.user;
+  validateMongoDbId(_id);
+
+  try {
+    if (!COD) {
+      const error = new CustomError("create cash order failed");
+      return next(error);
+    }
+
+    const user = await userModel.findById(_id);
+    let userCart = await cartModel.findOne({ orderby: user._id });
+    let finalAmount = 0;
+
+    if (couponApplied && userCart.totalAfterDiscount) {
+      finalAmount = userCart.totalAfterDiscount;
+    } else {
+      finalAmount = userCart.cartTotal;
+    }
+    let newOrder = await new orderModel({
+      products: userCart.products,
+      paymentIntent: {
+        id: uniqueId(),
+        amount: finalAmount,
+        method: "COD",
+        status: "Cash on Delivery",
+        created: Date.now(),
+        currency: "usd",
+      },
+      orderby: user._id,
+      orderStatus: "Cash on Delivery",
+    }).save();
+
+    let update = userCart.products.map((item) => {
+      return {
+        updateOne: {
+          filter: { _id: item.product._id },
+          update: { $inc: { quantity: -item.count, sold: +item.count } },
+        },
+      };
+    });
+    await productModel.bulkWrite(update, {});
+    res.json({ message: "success" });
+  } catch (error) {}
+});
+// *********************************************************************
+// exports.getOrders = asyncErrorHanlder(async (req, res, next) => {
+//   const { _id } = req.user;
+
+//   validateMongoDbId(_id);
+//   const userOrders = await orderModel
+//     .findOne({ orderby: _id })
+//     .populate("products.product")
+//     .exec();
+//     res.json({userOrders})
+// });
+
+exports.getOrders = asyncErrorHanlder(async (req, res, next) => {
+  const { _id } = req.user;
+  validateMongoDbId(_id);
+
+  const userOrders = await orderModel.aggregate([
+    {
+      $match: { orderby: new mongoose.Types.ObjectId(_id) },
+    },
+    {
+      $lookup: {
+        from: "products", // Assuming your products collection is named "products"
+        localField: "products.product",
+        foreignField: "_id",
+        as: "product",
+      },
+    },
+  ]);
+
+  if (userOrders.length === 0) {
+    const error = new CustomError("No orders found for the user", 404);
+    return next(error);
+  }
+
+  res.status(200).json({ userOrders: userOrders[0] });
+});
+// ***********************************************************************
+
+exports.updateOrderStatus = asyncErrorHanlder(async (req, res, next) => {
+  const { status } = req.body;
+  const { id } = req.params;
+  validateMongoDbId(id);
+
+  const updateOrderStatus = await orderModel.findByIdAndUpdate(
+    id,
+    {
+      orderStatus: status,
+      paymentIntent: { status },
+    },
+    { new: true }
+  )
+  // const orderWithProducts = await orderModel.aggregate([
+  //   {
+  //     $match: { _id: updateOrderStatus._id }
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: "products",
+  //       localField: "products.product",
+  //       foreignField: "_id",
+  //       as: "product"
+  //     }
+  //   }
+  // ]);
+
+  res.status(200).json({ updateOrderStatus });
+});

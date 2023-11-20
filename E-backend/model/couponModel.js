@@ -9,11 +9,11 @@ const couponSchmea = new mongoose.Schema({
   },
   expiry: {
     type: Date,
-    required: [true,"expiry is required field"],
+    required: [true, "expiry is required field"],
   },
   discount: {
     type: Number,
-    required: [true,"discount is required field"],
+    required: [true, "discount is required field"],
   },
 });
 

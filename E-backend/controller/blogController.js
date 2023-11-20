@@ -62,7 +62,7 @@ const getAllBlogs = asyncErrorHanlder(async (req, res) => {
   const getBlogs = await blogArray.find();
   res.status(200).json({ getBlogs });
 });
-
+// ***********************************************************************
 const deleteBlog = asyncErrorHanlder(async (req, res, next) => {
   validateMongoDbId(req.params.id);
   const deleteBlog = await blogArray.findByIdAndDelete(req.params.id);
