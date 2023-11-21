@@ -43,6 +43,8 @@ let productSchema = new mongoose.Schema(
     images: {
       type: Array,
     },
+    tags: String,
+    color: [],
     color: {
       type: String,
       //   validate: {
@@ -55,7 +57,7 @@ let productSchema = new mongoose.Schema(
     ratings: [
       {
         star: Number,
-        comment:String,
+        comment: String,
         postedby: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
       },
     ],

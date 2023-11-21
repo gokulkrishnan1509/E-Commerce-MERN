@@ -350,6 +350,7 @@ exports.getUserUpdate = asyncErrorHanlder(async (req, res, next) => {
   validateMongoDbId(_id);
   const user = await userModel.findByIdAndUpdate(_id, req.body, {
     new: true,
+    runValidators: true,
   });
   if (!user) {
     const error = new CustomError("user with that ID is not found", 404);
@@ -646,7 +647,7 @@ exports.updateOrderStatus = asyncErrorHanlder(async (req, res, next) => {
       paymentIntent: { status },
     },
     { new: true }
-  )
+  );
   // const orderWithProducts = await orderModel.aggregate([
   //   {
   //     $match: { _id: updateOrderStatus._id }

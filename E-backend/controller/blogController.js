@@ -18,7 +18,7 @@ const updateBlog = asyncErrorHanlder(async (req, res) => {
     req.params.id,
     req.body,
     {
-      new: true,
+      new: true,runValidators:true
     }
   );
   res.status(200).json({ patchedBlog });

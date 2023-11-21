@@ -5,14 +5,14 @@ const validateMongoDbId = require("../utils/validateMongooseId");
 
 const createBlogCate = asyncErrorHandler(async (req, res, next) => {
   const newCategory = await blogCategory.create(req.body);
-  res.json({ newCategory });
+  res.status(201).json({ newCategory });
 });
 
 const updateBlogCate = asyncErrorHandler(async (req, res, next) => {
   const { id } = req.params;
   validateMongoDbId(id);
   const updatedCategory = await blogCategory.findByIdAndUpdate(id, req.body, {
-    new: true,
+    new: true,runValidators:true
   });
   if (!updatedCategory) {
     const error = CustomError("Given Id not exist in DB", 404);

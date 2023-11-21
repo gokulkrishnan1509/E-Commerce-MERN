@@ -6,14 +6,14 @@ const validateMongoDbId = require("../utils/validateMongooseId");
 const createCategory = asyncErrorHanlder(async (req, res, next) => {
   const newCategory = await Category.create(req.body);
 
-  res.json({ newCategory });
+  res.status(210).json({ newCategory });
 });
 
 const updateCategory = asyncErrorHanlder(async (req, res, next) => {
   const { id } = req.params;
   validateMongoDbId(id);
   const updatedCategory = await Category.findByIdAndUpdate(id, req.body, {
-    new: true,
+    new: true,runValidators:true
   });
 
   if (!updatedCategory) {

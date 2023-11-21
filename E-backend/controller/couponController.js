@@ -6,7 +6,7 @@ const CustomError = require("../utils/customError");
 const createCoupon = asyncErrorHandler(async (req, res) => {
   const newCoupon = await couponArray.create(req.body);
 
-  res.status(200).json({ newCoupon });
+  res.status(201).json({ newCoupon });
 });
 
 const getAllCoupons = asyncErrorHandler(async (req, res) => {
@@ -18,7 +18,7 @@ const updateCoupons = asyncErrorHandler(async (req, res, next) => {
   const { id } = req.params;
   validateMongoDbId(id);
   const updatedCoupons = await couponArray.findByIdAndUpdate(id, req.body, {
-    new: true,
+    new: true,runValidators:true
   });
 
   if (!updatedCoupons) {

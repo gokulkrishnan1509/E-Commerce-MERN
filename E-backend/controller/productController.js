@@ -5,14 +5,17 @@ const slugify = require("slugify");
 const Apifeatures = require("../utils/pagination");
 const userArray = require("../model/userModel");
 const validateMongoDbId = require("../utils/validateMongooseId");
-const cloudinaryUploadImg = require("../utils/cloudinary");
+const {
+  cloudinaryUploadImg,
+  cloudinaryDeleteImg,
+} = require("../utils/cloudinary");
 const fs = require("fs");
 exports.createProduct = asyncErrorHandler(async (req, res) => {
   if (req.body.title) {
     req.body.slug = slugify(req.body.title);
   }
   const newProduct = await ProductArray.create(req.body);
-  res.status(200).json({ newProduct });
+  res.status(201).json({ newProduct });
 });
 
 exports.updateProduct = asyncErrorHandler(async (req, res, next) => {
@@ -82,11 +85,10 @@ exports.getAllProduct = asyncErrorHandler(async (req, res) => {
 exports.addToWishList = asyncErrorHandler(async (req, res, next) => {
   const { _id } = req.user;
   const { prodId } = req.body;
-  console.log(prodId)
+  console.log(prodId);
 
   const user = await userArray.findById(_id);
 
-  
   if (!user) {
     const error = new CustomError("User with the given ID not exist", 404);
     return next(error);
@@ -162,8 +164,8 @@ exports.ratingfunc = asyncErrorHandler(async (req, res, next) => {
 });
 
 exports.uploadImages = asyncErrorHandler(async (req, res) => {
-  const { id } = req.params;
-  validateMongoDbId(id);
+  // const { id } = req.params;
+  // validateMongoDbId(id);
 
   const uploader = (path) => cloudinaryUploadImg(path, "images");
   const urls = [];
@@ -176,14 +178,26 @@ exports.uploadImages = asyncErrorHandler(async (req, res) => {
     fs.unlinkSync(path);
   }
 
-  const findProduct = await ProductArray.findByIdAndUpdate(
-    id,
-    {
-      images: urls.map((file) => {
-        return file;
-      }),
-    },
-    { new: true }
-  );
-  res.status(200).json({ findProduct });
+  const images = urls.map((file) => {
+    return file;
+  });
+  res.status(200).json({ images });
+  // const findProduct = await ProductArray.findByIdAndUpdate(
+  //   id,
+  //   {
+  //     images: urls.map((file) => {
+  //       return file;
+  //     }),
+  //   },
+  //   { new: true }
+  // );
+  // res.status(200).json({ findProduct });
+});
+
+exports.deleteImages = asyncErrorHandler(async (req, res) => {
+  const { id } = req.params;
+console.log(id)
+  const deleted = await cloudinaryDeleteImg(id, "images");
+
+  res.status(200).json({ message: "Deleted" });
 });
