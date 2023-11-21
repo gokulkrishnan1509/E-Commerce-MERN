@@ -60,10 +60,10 @@ const userSchema = new mongoose.Schema(
     refreshToken: { type: String },
 
     // address: [{ type: mongoose.Schema.Types.ObjectId, ref: "Address" }],
-    address:{
-      type:String
+    address: {
+      type: String,
     },
-    
+
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
     passwordChangedAt: Date,
     passwordResetToken: String,
