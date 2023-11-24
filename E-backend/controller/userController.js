@@ -23,22 +23,26 @@ const couponModel = require("../model/couponModel");
 const userModel = require("../model/userModel");
 const orderModel = require("../model/orderModel");
 
-// ***************************************************************
-const allowedRoles = ["admin", "super admin"];
+// ********************Generate Token*********************************
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.SECERET_STRING, {
     expiresIn: process.env.EXPIRE_DAYS,
   });
 };
+
+
+const allowedRoles = ["admin", "super admin"];
+
 // ***********************************************************************
+
 exports.createUser = asyncErrorHanlder(async (req, res, next) => {
   try {
     const user = await userModel.create(req.body);
 
     const token = generateToken(user._id);
 
-    res.status(200).json({ status: "success", data: { user }, token });
+    res.status(201).json({ status: "success", data: { user }, token });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -96,7 +100,7 @@ exports.adminLogin = asyncErrorHanlder(async (req, res, next) => {
 
   const adminUser = await userModel.findOne({ email }).select("+password");
   if (!allowedRoles.includes(adminUser.role)) {
-    const error = new CustomError("Not Authorised");
+    const error = new CustomError("Not Authorised",403);
     return next(error);
   }
   const isMatch = await adminUser.comparePasswordInDb(
@@ -491,7 +495,7 @@ exports.userCart = asyncErrorHanlder(async (req, res) => {
   } catch (error) {}
 });
 
-// **********************************************************************
+// *************************************************************************
 exports.getUserCart = asyncErrorHanlder(async (req, res) => {
   const { _id } = req.user;
   validateMongoDbId(_id);
@@ -505,6 +509,7 @@ exports.getUserCart = asyncErrorHanlder(async (req, res) => {
   res.status(200).json({ cart });
 });
 
+// *************************************************************************
 exports.emptyCart = asyncErrorHanlder(async (req, res, next) => {
   const { _id } = req.user;
   validateMongoDbId(_id);
