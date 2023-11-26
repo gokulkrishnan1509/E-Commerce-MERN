@@ -42,15 +42,22 @@ const Addproduct = () => {
           <form action="">
             <CustomInput type="text" label="Enter Product Title" />
             <div className="mb-3">
-              <ReactQuill
+              {/* <ReactQuill
                 theme="snow"
                 value={desc}
                 onChange={(evt) => {
                   handleDesc(evt);
                 }}
+              /> */}
+              <ReactQuill
+                theme="snow"
+                value={desc}
+                onChange={(content, delta, source, editor) => {
+                  handleDesc(content);
+                }}
               />
             </div>
-            <CustomInput type="number" label="Enter Product Price" />
+            <CustomInput type="number" label="Enter Product Price" id="enter price" />
 
             <select name="" className="form-control py-3 mb-3">
               <option value="">Select Brand</option>

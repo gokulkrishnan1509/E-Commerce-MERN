@@ -101,4 +101,8 @@ main::-webkit-scrollbar{
   }
 }
 
+.error{
+  color:red;
+  font-size: 12px;
+}
   

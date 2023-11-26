@@ -31,7 +31,6 @@ const generateToken = (id) => {
   });
 };
 
-
 const allowedRoles = ["admin", "super admin"];
 
 // ***********************************************************************
@@ -82,7 +81,13 @@ exports.login = asyncErrorHanlder(async (req, res, next) => {
   }
   const token = generateToken(user._id);
 
-  res.status(200).json({ status: "success", token });
+  res.status(200).json({
+    _id: user?._id,
+    name: user?.name,
+    email: user?.email,
+    mobile: user?.mobile,
+    token,
+  });
 });
 // ***********************************************************************
 
@@ -100,7 +105,7 @@ exports.adminLogin = asyncErrorHanlder(async (req, res, next) => {
 
   const adminUser = await userModel.findOne({ email }).select("+password");
   if (!allowedRoles.includes(adminUser.role)) {
-    const error = new CustomError("Not Authorised",403);
+    const error = new CustomError("Not Authorised", 403);
     return next(error);
   }
   const isMatch = await adminUser.comparePasswordInDb(
@@ -126,7 +131,15 @@ exports.adminLogin = asyncErrorHanlder(async (req, res, next) => {
 
   const token = generateToken(adminUser._id);
 
-  res.status(200).json({ status: "success", token });
+  res
+    .status(200)
+    .json({
+      _id: adminUser?._id,
+      name: adminUser?.name,
+      email: adminUser?.email,
+      mobile: adminUser?.mobile,
+      token,
+    });
 });
 
 // ***********************************************************************

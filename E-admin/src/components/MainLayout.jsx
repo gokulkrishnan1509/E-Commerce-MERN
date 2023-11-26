@@ -224,6 +224,7 @@ const MainLayout = () => {
           }}
         >
           <Outlet />
+          <button onClick={()=>{navigate("/")}}>button</button>
         </Content>
       </Layout>
     </Layout>
