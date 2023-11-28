@@ -131,15 +131,13 @@ exports.adminLogin = asyncErrorHanlder(async (req, res, next) => {
 
   const token = generateToken(adminUser._id);
 
-  res
-    .status(200)
-    .json({
-      _id: adminUser?._id,
-      name: adminUser?.name,
-      email: adminUser?.email,
-      mobile: adminUser?.mobile,
-      token,
-    });
+  res.status(200).json({
+    _id: adminUser?._id,
+    name: adminUser?.name,
+    email: adminUser?.email,
+    mobile: adminUser?.mobile,
+    token,
+  });
 });
 
 // ***********************************************************************

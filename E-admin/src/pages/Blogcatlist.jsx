@@ -1,27 +1,54 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 // ************Antd Design *******************
 import { Table } from "antd";
+// ************************React Redux*********************
+import { useDispatch, useSelector } from "react-redux";
+// **********************React router ******************
+import { Link } from "react-router-dom";
+// **************************React Icon *****************
+import { BiEdit } from "react-icons/bi";
+import { AiFillDelete } from "react-icons/ai";
+
+import { getBlogCate } from "../features/blogcate/blogcateSlice";
 
 const columns = [
   { title: "SNo", dataIndex: "Key" },
   { title: "Name", dataIndex: "name" },
-  { title: "Product", dataIndex: "product" },
-  { title: "Status", dataIndex: "status" },
+  { title: "Action", dataIndex: "action" },
 ];
 
-const data1 = [];
-
-for (let i = 0; i < 46; i++) {
-  data1.push({
-    Key: i,
-    name: `Edward King ${i}`,
-    product: 32,
-    status: `London, Park Lane no .${i}`,
-  });
-}
-
 const Blogcatalist = () => {
+  const dispatch = useDispatch();
+  const { blogcategory } = useSelector((state) => state.blogscategory);
+  useEffect(() => {
+    let timeOut = setTimeout(() => {
+      dispatch(getBlogCate());
+    });
+
+    return () => {
+      clearTimeout(timeOut);
+    };
+  }, [dispatch]);
+  const data1 = [];
+
+  for (let i = 0; i < blogcategory.length; i++) {
+    data1.push({
+      Key: i + 1,
+      name: blogcategory[i].title,
+      action: (
+        <>
+          <Link to="/" className="fs-3 text-danger">
+            <BiEdit />
+          </Link>
+          <Link to="/" className="fs-3 ms-3 text-danger">
+            <AiFillDelete />
+          </Link>
+        </>
+      ),
+    });
+  }
+
   return (
     <>
       <div>

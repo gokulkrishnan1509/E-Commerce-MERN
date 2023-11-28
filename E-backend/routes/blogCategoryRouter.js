@@ -19,7 +19,7 @@ router
 router
   .route("/delete-blogcategory/:id")
   .delete(protect, restrict("admin", "super admin"), deleteBlogCate);
-router.route("/getll-blogcategory").get(getAllBlogCate);
+router.route("/getall-blogcategory").get(getAllBlogCate);
 router.route("/getone-blogcategory/:id").get(getBlogCate);
 
 module.exports = router;

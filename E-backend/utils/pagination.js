@@ -3,6 +3,7 @@ class Apifeatures {
     this.query = query;
     this.queryStr = queryStr;
     this.queryObj = { ...this.queryStr };
+    
   }
   excludes() {
     // const queryObj = { ...this.queryStr };

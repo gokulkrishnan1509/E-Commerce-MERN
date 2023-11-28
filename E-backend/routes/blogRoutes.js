@@ -15,7 +15,7 @@ const { uploadPhoto, blogImgResize } = require("../utils/uploadImages");
 
 router
   .route("/blog-post")
-  .post(protect, restrict("admin", "super admin"), createBlog);
+  .post(createBlog);
 
 router
   .route("/blog-uploading/:id")

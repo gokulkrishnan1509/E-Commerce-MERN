@@ -11,7 +11,7 @@ const { protect, restrict } = require("../controller/userController");
 
 router
   .route("/brand-create")
-  .post(protect, restrict("admin", "super admin"), createBrand);
+  .post(createBrand);
 router
   .route("/brand-update/:id")
   .patch(protect, restrict("admin", "super admin"), updateBrand);

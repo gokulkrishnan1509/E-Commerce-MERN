@@ -36,6 +36,7 @@ router.route("/deleteuser/:id").delete(getUserDelete);
 router.route("/cookie").put(handleRefreshToken);
 router.route("/logout").delete(logout);
 router.route("/admin-login").post(adminLogin);
+router.route("/fetchall").get(fetchAllUser);
 
 // this below url update by authorized user.
 router.route("/updateuser").patch(protect, getUserUpdate);
@@ -59,9 +60,7 @@ router
 router
   .route("/unblock-user/:id")
   .patch(protect, restrict("admin", "super admin"), unblockUser);
-router
-  .route("/fetchall")
-  .get(protect, restrict("admin", "super admin"), fetchAllUser);
+
 router
   .route("/update-order/:id")
   .patch(protect, restrict("admin", "super admin"),updateOrderStatus);

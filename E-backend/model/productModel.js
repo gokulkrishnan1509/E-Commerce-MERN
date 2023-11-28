@@ -44,7 +44,7 @@ let productSchema = new mongoose.Schema(
       type: Array,
     },
     tags: String,
-    color: [],
+    // color: [],
     color: {
       type: String,
       //   validate: {

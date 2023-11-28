@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 // **************React-Router-dom****************
-import { Link, useNavigate ,useLocation} from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 // ***************** Formik Forms ******************
 import { useFormik } from "formik";
 
@@ -16,6 +16,9 @@ import CustomInput from "../components/CustomInput";
 
 // *****************  features folder **************
 import { login } from "../features/auth/authSlice";
+
+
+
 
 function Login() {
   const dispatch = useDispatch();
@@ -41,19 +44,14 @@ function Login() {
     (state) => state.auth
   );
 
-  // const userData = JSON.parse(localStorage.getItem("token"));
-  // const userData = JSON.parse(localStorage.getItem("user"));
+
   useEffect(() => {
-    console.log(user,"gokul")
-
-    // if (user  || isSuccess) {
-    //   navigate("admin");
-    // }else{
-    //   navigate("/")
-    // }
-
-   
-  }, []);
+    if (user && isSuccess) {
+      navigate("admin");
+    } else {
+      navigate("");
+    }
+  }, [user, isSuccess]);
   return (
     <>
       <div
@@ -64,6 +62,9 @@ function Login() {
           <div className="my-5  col-lg-3  col-12  bg-white rounded-3 mx-auto  p-4">
             <h3 className="text-center">Login</h3>
             <p className="text-center">Login to you account to continue.</p>
+            <div className="error text-center">
+              {message.message == "Rejected" ? "You are not an Admin" : ""}
+            </div>
             <form onSubmit={formik.handleSubmit}>
               <CustomInput
                 type="text"

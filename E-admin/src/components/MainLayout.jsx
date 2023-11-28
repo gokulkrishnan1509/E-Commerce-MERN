@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 // **************antd for sytle *******************
 import { Layout, Menu, Button, theme } from "antd";
 const { Header, Sider, Content } = Layout;
@@ -29,6 +29,13 @@ const MainLayout = () => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+  const userData = JSON.parse(localStorage.getItem("user"));
+
+//   useEffect(()=>{
+// if(!userData){
+//   navigate("/")
+// }
+//   },[navigate])
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -224,7 +231,7 @@ const MainLayout = () => {
           }}
         >
           <Outlet />
-          <button onClick={()=>{navigate("/")}}>button</button>
+          {/* <button onClick={()=>{navigate("/")}}>button</button> */}
         </Content>
       </Layout>
     </Layout>
