@@ -13,9 +13,24 @@ import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import { getBlogs } from "../features/blogs/blogSlice";
 
+
 const columns = [
   { title: "SNo", dataIndex: "Key" },
-  { title: "Name", dataIndex: "name" },
+  {
+    title: "Name",
+    dataIndex: "name",
+    sorter: (a, b) => {
+      const nameA = a.name.toUpperCase();
+      const nameB = b.name.toUpperCase();
+      if (nameA < nameB) {
+        return -1;
+      } else if (nameA > nameB) {
+        return 1;
+      } else {
+        return 0;
+      }
+    },
+  },
   { title: "Category", dataIndex: "category" },
   { title: "Action", dataIndex: "action" },
 ];
@@ -33,10 +48,10 @@ const Bloglist = () => {
   }, [dispatch]);
   const data1 = [];
 
-  for (let i = 0; i <blogs.length; i++) {
+  for (let i = 0; i < blogs.length; i++) {
     data1.push({
-      Key: i +1,
-      name:blogs[i].title,
+      Key: i + 1,
+      name: blogs[i].title,
       category: blogs[i].category,
       action: (
         <>
@@ -50,7 +65,7 @@ const Bloglist = () => {
       ),
     });
   }
-  
+
   return (
     <>
       <div>

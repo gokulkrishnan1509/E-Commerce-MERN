@@ -11,10 +11,39 @@ import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 
 import { getBlogCate } from "../features/blogcate/blogcateSlice";
+// {
+//   title: "Name",
+//   dataIndex: "name",
+//   sorter: (a, b) => {
+//     const nameA = a.name.toUpperCase();
+//     const nameB = b.name.toUpperCase();
 
+//     if (nameA < nameB) {
+//       return -1;
+//     } else if (nameA > nameB) {
+//       return 1;
+//     } else {
+//       return 0;
+//     }
+//   },
+// },
 const columns = [
   { title: "SNo", dataIndex: "Key" },
-  { title: "Name", dataIndex: "name" },
+  {
+    title: "Name",
+    dataIndex: "name",
+    sorter: (a, b) => {
+      const nameA = a.name.toUpperCase();
+      const nameB = b.name.toUpperCase();
+      if (nameA < nameB) {
+        return -1;
+      } else if (nameA > nameB) {
+        return 1;
+      } else {
+        return 0;
+      }
+    },
+  },
   { title: "Action", dataIndex: "action" },
 ];
 

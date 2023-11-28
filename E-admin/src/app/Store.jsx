@@ -6,6 +6,8 @@ import brandSlice from "../features/brand/brandSlice";
 import pCategorySlice from "../features/pcategory/pcategorySlice";
 import blogSlice from "../features/blogs/blogSlice";
 import blogcateSlice from "../features/blogcate/blogcateSlice";
+import colorSlice from "../features/color/colorSlice";
+import enquirySlice from "../features/enquiry/enquirySlice";
 
 export const store = configureStore({
   reducer: {
@@ -16,5 +18,7 @@ export const store = configureStore({
     pcategory: pCategorySlice,
     blogs: blogSlice,
     blogscategory: blogcateSlice,
+    color: colorSlice,
+    enquery: enquirySlice,
   },
 });

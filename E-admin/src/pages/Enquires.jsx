@@ -1,6 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 // *******************Antd Design***********************
 import { Table } from "antd";
+// ************************React Redux*********************
+import { useDispatch, useSelector } from "react-redux";
+
+// **********************React router ******************
+import { Link } from "react-router-dom";
+
+// **************************React Icon *****************
+import { BiEdit } from "react-icons/bi";
+import { AiFillDelete } from "react-icons/ai";
+
+import { getEnquiry } from "../features/enquiry/enquirySlice";
 
 const columns = [
   { title: "SNo", dataIndex: "Key" },
@@ -20,6 +31,17 @@ for (let i = 0; i < 46; i++) {
 }
 
 const Enquires = () => {
+
+  const dispatch = useDispatch();
+  const{enquiries} = useSelector((state)=>state.enquery)
+  useEffect(() => {
+    let timeOut = setTimeout(() => {
+      dispatch(getEnquiry());
+    });
+    return () => {
+      clearTimeout(timeOut);
+    };
+  }, [dispatch]);
   return (
     <>
       <div>
