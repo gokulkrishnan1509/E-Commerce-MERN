@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 // **************************React Icon *****************
-import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 
 import { getEnquiry } from "../features/enquiry/enquirySlice";
@@ -16,24 +15,16 @@ import { getEnquiry } from "../features/enquiry/enquirySlice";
 const columns = [
   { title: "SNo", dataIndex: "Key" },
   { title: "Name", dataIndex: "name" },
-  { title: "Product", dataIndex: "product" },
+  { title: "Email", dataIndex: "email" },
+  { title: "Mobile", dataIndex: "mobile" },
   { title: "Status", dataIndex: "status" },
+  { title: "Date", dataIndex: "date" },
+  { title: "Action", dataIndex: "action" },
 ];
 
-const data1 = [];
-for (let i = 0; i < 46; i++) {
-  data1.push({
-    Key: i,
-    name: `Edward King ${i}`,
-    product: 32,
-    status: `London, Park Lane no. ${i}`,
-  });
-}
-
 const Enquires = () => {
-
   const dispatch = useDispatch();
-  const{enquiries} = useSelector((state)=>state.enquery)
+  const { enquiries } = useSelector((state) => state.enquery);
   useEffect(() => {
     let timeOut = setTimeout(() => {
       dispatch(getEnquiry());
@@ -42,6 +33,31 @@ const Enquires = () => {
       clearTimeout(timeOut);
     };
   }, [dispatch]);
+  const data1 = [];
+  for (let i = 0; i < enquiries.length; i++) {
+    data1.push({
+      Key: i + 1,
+      name: enquiries[i].name,
+      email: enquiries[i].email,
+      mobile: enquiries[i].mobile,
+      date: new Date(enquiries[i].createdAt).toLocaleString(),
+      status: (
+        <>
+          <select name="" id="" className="form-control form-select">
+            <option value="">Select</option>
+          </select>
+        </>
+      ),
+      action: (
+        <>
+          <Link className="ms-3 fs-3 text-danger">
+            <AiFillDelete />
+          </Link>
+        </>
+      ),
+    });
+  }
+
   return (
     <>
       <div>

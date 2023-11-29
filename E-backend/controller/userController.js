@@ -637,7 +637,13 @@ exports.getOrders = asyncErrorHanlder(async (req, res, next) => {
         from: "products", // Assuming your products collection is named "products"
         localField: "products.product",
         foreignField: "_id",
-        as: "product",
+        as: "products",
+      },
+      $lookup: {
+        from: "users",
+        localField: "orderby",
+        foreignField: "_id",
+        as: "orderby",
       },
     },
   ]);
@@ -651,6 +657,34 @@ exports.getOrders = asyncErrorHanlder(async (req, res, next) => {
 });
 // ***********************************************************************
 
+exports.getAllOrders = asyncErrorHanlder(async (req, res) => {
+  try {
+    
+
+     const alluserOders = await orderModel.aggregate([
+      {
+        $lookup:{
+          from:"products",
+          localField:"products.product",
+          foreignField:"_id",
+          as:"products"
+        }
+      },{
+        $lookup:{
+          from:"users",
+          localField:"orderby",
+          foreignField:"_id",
+          as:"orderby"
+        }
+      }
+     ])
+
+    res.status(200).json({alluserOders})
+
+  } catch (error) {}
+});
+
+// ***************************************************************************
 exports.updateOrderStatus = asyncErrorHanlder(async (req, res, next) => {
   const { status } = req.body;
   const { id } = req.params;

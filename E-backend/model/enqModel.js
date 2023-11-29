@@ -26,6 +26,8 @@ const enqSchema = new mongoose.Schema({
       message: 'Status must be one of: Submitted, Contacted, In Progress',
     },
   },
+},{
+  timestamps:true
 });
 
 const Enquiry = mongoose.model("Enquiry", enqSchema);

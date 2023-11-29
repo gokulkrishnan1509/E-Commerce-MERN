@@ -8,7 +8,7 @@ import blogSlice from "../features/blogs/blogSlice";
 import blogcateSlice from "../features/blogcate/blogcateSlice";
 import colorSlice from "../features/color/colorSlice";
 import enquirySlice from "../features/enquiry/enquirySlice";
-
+import uploadSlice from "../features/upload/uploadSlice";
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -20,5 +20,6 @@ export const store = configureStore({
     blogscategory: blogcateSlice,
     color: colorSlice,
     enquery: enquirySlice,
+    upload: uploadSlice,
   },
 });

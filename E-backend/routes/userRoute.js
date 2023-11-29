@@ -26,6 +26,7 @@ const {
   createOrder,
   getOrders,
   updateOrderStatus,
+  getAllOrders,
 } = require("../controller/userController");
 
 router.route("/post").post(createUser);
@@ -63,6 +64,10 @@ router
 
 router
   .route("/update-order/:id")
-  .patch(protect, restrict("admin", "super admin"),updateOrderStatus);
+  .patch(protect, restrict("admin", "super admin"), updateOrderStatus);
+
+router
+  .route("/getall-orders")
+  .get(protect, restrict("admin", "super admin"), getAllOrders);
 
 module.exports = router;
