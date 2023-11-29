@@ -5,11 +5,7 @@ const slugify = require("slugify");
 const Apifeatures = require("../utils/pagination");
 const userArray = require("../model/userModel");
 const validateMongoDbId = require("../utils/validateMongooseId");
-const {
-  cloudinaryUploadImg,
-  cloudinaryDeleteImg,
-} = require("../utils/cloudinary");
-const fs = require("fs");
+
 exports.createProduct = asyncErrorHandler(async (req, res) => {
   if (req.body.title) {
     req.body.slug = slugify(req.body.title);
@@ -163,41 +159,40 @@ exports.ratingfunc = asyncErrorHandler(async (req, res, next) => {
   // console.log(Math.round(9 / 2));
 });
 
-exports.uploadImages = asyncErrorHandler(async (req, res) => {
-  // const { id } = req.params;
-  // validateMongoDbId(id);
+// exports.uploadImages = asyncErrorHandler(async (req, res) => {
+//   // const { id } = req.params;
+//   // validateMongoDbId(id);
 
-  const uploader = (path) => cloudinaryUploadImg(path, "images");
-  const urls = [];
-  const files = req.files;
+//   const uploader = (path) => cloudinaryUploadImg(path, "images");
+//   const urls = [];
+//   const files = req.files;
 
-  for (let file of files) {
-    const { path } = file;
-    const newpath = await uploader(path);
-    urls.push(newpath);
-    fs.unlinkSync(path);
-  }
+//   for (let file of files) {
+//     const { path } = file;
+//     const newpath = await uploader(path);
+//     urls.push(newpath);
+//     fs.unlinkSync(path);
+//   }
 
-  const images = urls.map((file) => {
-    return file;
-  });
-  res.status(200).json({ images });
-  // const findProduct = await ProductArray.findByIdAndUpdate(
-  //   id,
-  //   {
-  //     images: urls.map((file) => {
-  //       return file;
-  //     }),
-  //   },
-  //   { new: true }
-  // );
-  // res.status(200).json({ findProduct });
-});
+//   const images = urls.map((file) => {
+//     return file;
+//   });
+//   res.status(200).json({ images });
+//   // const findProduct = await ProductArray.findByIdAndUpdate(
+//   //   id,
+//   //   {
+//   //     images: urls.map((file) => {
+//   //       return file;
+//   //     }),
+//   //   },
+//   //   { new: true }
+//   // );
+//   // res.status(200).json({ findProduct });
+// });
 
-exports.deleteImages = asyncErrorHandler(async (req, res) => {
-  const { id } = req.params;
-console.log(id)
-  const deleted = await cloudinaryDeleteImg(id, "images");
+// exports.deleteImages = asyncErrorHandler(async (req, res) => {
+//   const { id } = req.params;
+//   const deleted = await cloudinaryDeleteImg(id, "images");
 
-  res.status(200).json({ message: "Deleted" });
-});
+//   res.status(200).json({ message: "Deleted" });
+// });

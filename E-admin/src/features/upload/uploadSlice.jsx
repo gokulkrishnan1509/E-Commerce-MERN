@@ -3,9 +3,13 @@ import uploadService from "./uploadService";
 
 export const uploadImgtoServer = createAsyncThunk(
   "upload/images",
-  async (thunkAPI) => {
+  async (data,thunkAPI) => {
     try {
-      return await uploadService.uploadImg();
+      const formData = new FormData();
+      for (let i = 0; i < data.length; i++) {
+        formData.append("images", data[i]);
+      }
+      return await uploadService.uploadImg(formData);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }

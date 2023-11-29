@@ -8,8 +8,8 @@ const {
   deleteProduct,
   addToWishList,
   ratingfunc,
-  uploadImages,
-  deleteImages,
+  // uploadImages,
+  // deleteImages,
 } = require("../controller/productController");
 const { uploadPhoto, productImgResize } = require("../utils/uploadImages");
 const { protect, restrict } = require("../controller/userController");
@@ -31,19 +31,19 @@ router
 // http://localhost:1509/product/upload/654e0f37b2a65ea5abfc624f
 // in postman we have to set like above and  this(654e0f37b2a65ea5abfc624f) it is an product id
 // in form-data of headers in post we have to set (images as key)  and (value as upload image)
-router
-  .route("/upload")
-  .put(
-    protect,
-    restrict("admin", "super admin"),
-    uploadPhoto.array("images", 10),
-    productImgResize,
-    uploadImages
-  );
+// router
+//   .route("/upload")
+//   .put(
+//     protect,
+//     restrict("admin", "super admin"),
+//     uploadPhoto.array("images", 10),
+//     productImgResize,
+//     uploadImages
+//   );
 
-router
-  .route("/delete-img/:id")
-  .delete(protect, restrict("admin", "super admin"), deleteImages);
+// router
+  // .route("/delete-img/:id")
+  // .delete(protect, restrict("admin", "super admin"), deleteImages);
 // ******************get all product************************************
 router.route("/all-product").get(getAllProduct);
 

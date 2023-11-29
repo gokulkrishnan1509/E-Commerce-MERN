@@ -21,6 +21,7 @@ const brandRouter = require("./routes/brandRouter");
 const couponRouter = require("./routes/couponRoutes");
 const colorRouter = require("./routes/colorRoutes");
 const queryRouter = require("./routes/enqRoutes");
+const uploadRouter = require("./routes/uploadRouts");
 
 // ********************MongoDB connection *************************
 mongoose
@@ -48,6 +49,7 @@ app.use("/brand", brandRouter);
 app.use("/coupon", couponRouter);
 app.use("/color", colorRouter);
 app.use("/query", queryRouter);
+app.use("/uploadimage", uploadRouter);
 
 // ***********************Handling Router Error *****************
 app.all("*", (req, res, next) => {
