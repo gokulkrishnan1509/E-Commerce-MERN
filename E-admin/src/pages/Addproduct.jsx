@@ -13,46 +13,73 @@ import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 
 // ************************React Widgets*******************
-import Multiselect from "react-widgets/Multiselect";
-import "react-widgets/styles.css";
+// import Multiselect from "react-widgets/Multiselect";
+// import "react-widgets/styles.css";
+
+// ***********************Toaster ***************************
+import { toast } from "react-toastify";
+
+// *************************antd design******************************
+
+import { Select } from "antd";
 
 // ************************React Dropzone*****************
 
 import Dropzone from "react-dropzone";
+// ***************************Router Dom ****************
+import { useNavigate } from "react-router-dom";
 
 // *************************Redux slice***********************
 import { getBrands } from "../features/brand/brandSlice";
 import { getCategory } from "../features/pcategory/pcategorySlice";
 import { getColorsFromServer } from "../features/color/colorSlice";
 import { uploadImgtoServer, deleteImg } from "../features/upload/uploadSlice";
-import {createProudcts} from "../features/product/productSlice"
+import { createProudcts } from "../features/product/productSlice";
 
+// *******************************yup validation********************
 let schema = yup.object().shape({
   title: yup.string().required("Title is Required"),
   description: yup.string().required("Description is Required"),
   price: yup.number().required("Price is Required "),
   brand: yup.string().required("Brand is Required"),
   category: yup.string().required("Category is Required"),
-  color: yup.array().required("Colors are Required"),
+  tags: yup.string().required("Tags is required"),
+  color: yup
+    .array()
+    .min(1, "Pick at least one color")
+    .required("Colors are Required"),
+
   quantity: yup.number().required("Quantity is Required"),
 });
 
 const Addproduct = () => {
   const [color, setColor] = useState([]);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { brands } = useSelector((state) => state.brand);
   const { pCategory } = useSelector((state) => state.pcategory);
   const { colors } = useSelector((state) => state.color);
   const { images } = useSelector((state) => state.upload);
+  const { createProudctsinDb, isSuccess, isError, isLoading } = useSelector((state) => state.product);
 
-  // *******************************
+  useEffect(() => {
+    if (isSuccess ) {
+      toast.success("Product Added Successfully !");
+    }
+    if (isError) {
+      toast.error("Something Went Wrong !");
+    }
+  }, [isSuccess, isError, isLoading]);
+
+  // ********************************************************************
   const colorsWidget = [];
   const img = [];
 
   colors.forEach((element) => {
     colorsWidget.push({
-      _id: element._id,
-      color: element.title,
+      // if we are using ant design we have to set the key name as (value && label)
+      value: element._id,
+      label: element.title,
     });
   });
 
@@ -62,8 +89,7 @@ const Addproduct = () => {
       url: element.url,
     })
   );
-
-  // ****************************************
+  // ****************************************************************************
 
   useEffect(() => {
     let timeOut = setTimeout(() => {
@@ -78,8 +104,8 @@ const Addproduct = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    formik.values.color = color;
-    formik.values.images=img
+    formik.values.color = color ? color : " ";
+    formik.values.images = img;
   }, [color, img]);
 
   const formik = useFormik({
@@ -89,19 +115,24 @@ const Addproduct = () => {
       price: "",
       brand: "",
       category: "",
+      tags: "",
       color: "",
       quantity: "",
       images: "",
     },
     validationSchema: schema,
     onSubmit: (values) => {
-      dispatch(createProudcts(values))
+      dispatch(createProudcts(values));
+      formik.resetForm();
+      setColor(null);
+      setTimeout(() => {
+        navigate("/admin/product-list");
+      }, 3000);
     },
   });
-  // const [desc, setDesc] = useState();
-  // const handleDesc = (e) => {
-  //   setDesc(e);
-  // };
+  const handleColors = (e) => {
+    setColor(e);
+  };
   return (
     <>
       <div>
@@ -184,21 +215,47 @@ const Addproduct = () => {
             <div className="error">
               {formik.touched.category && formik.errors.category}
             </div>
-            <Multiselect
+
+            <select
+              name="tags"
+              onChange={formik.handleChange("tags")}
+              onBlur={formik.handleBlur("tags")}
+              value={formik.values.tags}
+              className="form-control py-3 mb-3"
+            >
+              <option disabled>Select Brand</option>
+              <option value="featured">Featured</option>
+              <option value="popular">Popular</option>
+              <option value="special">Special</option>
+            </select>
+            <div className="error">
+              {formik.touched.tags && formik.errors.tags}
+            </div>
+            {/* <Multiselect
               dataKey="id"
               name="color"
               textField="color"
-              // defaultValue={[1]}
-              // data={[
-              //   { id: 1, color: "Red" },
-              //   { id: 2, color: "Yellow" },
-              //   { id: 3, color: "Blue" },
-              //   { id: 4, color: "Orange" },
-              // ]}
+              defaultValue={[1]}
+              data={[
+                { id: 1, color: "Red" },
+                { id: 2, color: "Yellow" },
+                { id: 3, color: "Blue" },
+                { id: 4, color: "Orange" },
+              ]}
               data={colorsWidget}
               onChange={(e) => {
                 return setColor(e);
               }}
+            /> */}
+
+            <Select
+              mode="multiple"
+              allowClear
+              className="w-100"
+              placeholder="Select colors"
+              // defaultValue={color}
+              onChange={(i) => handleColors(i)}
+              options={colorsWidget}
             />
             <div className="error">
               {formik.touched.color && formik.errors.color}

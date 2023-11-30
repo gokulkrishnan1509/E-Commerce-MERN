@@ -34,7 +34,18 @@ const columns = [
   {
     title: "Category",
     dataIndex: "category",
-    sorter: (a, b) => a.category.localeCompare(b.category),
+    sorter: (a, b) => {
+      const nameA = a.category.toUpperCase();
+      const nameB = b.category.toUpperCase();
+
+      if (nameA < nameB) {
+        return -1;
+      } else if (nameA > nameB) {
+        return 1;
+      } else {
+        return 0;
+      }
+    },
   },
   { title: "Color", dataIndex: "color" },
 
@@ -65,8 +76,8 @@ const Productlist = function () {
       Key: i + 1,
       title: products[i].title,
       brand: products[i].brand,
-      category: products[i].catagory,
-      color: products[i].color,
+      category: products[i].category,
+      // color: products[i].color,
       price: `${products[i].price}`,
       action: (
         <>
@@ -80,6 +91,7 @@ const Productlist = function () {
       ),
     });
   }
+
 
   return (
     <>

@@ -52,17 +52,17 @@ const Customers = function () {
   //     mobile: item.mobile,
   //   }));
 
-  function onChange(pagination,filters,sorter,extra){
-    console.log(pagination,filters)
+  // function onChange(pagination,filters,sorter,extra){
+  //   console.log(pagination,filters)
 
-  }
+  // }
 
   return (
     <>
       <div>
         <h3 className="mb-4 title">Customers</h3>
         <div>
-          <Table columns={columns} dataSource={data1} rowKey={"Key"} onChange={onChange} />
+          <Table columns={columns} dataSource={data1} rowKey={"Key"}  />
         </div>
       </div>
     </>

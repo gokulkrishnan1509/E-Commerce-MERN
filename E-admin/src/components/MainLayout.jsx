@@ -1,4 +1,4 @@
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 // **************antd for sytle *******************
 import { Layout, Menu, Button, theme } from "antd";
 const { Header, Sider, Content } = Layout;
@@ -20,6 +20,12 @@ import { ImBlog } from "react-icons/im";
 import { TfiLayoutAccordionList } from "react-icons/tfi";
 import { CgUserList } from "react-icons/cg";
 import { IoIosNotifications } from "react-icons/io";
+
+// ******************Toaster Component****************
+
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 // ******************* React Router ******************
 import { Link, Outlet, useNavigate } from "react-router-dom";
 
@@ -31,11 +37,11 @@ const MainLayout = () => {
   } = theme.useToken();
   const userData = JSON.parse(localStorage.getItem("user"));
 
-//   useEffect(()=>{
-// if(!userData){
-//   navigate("/")
-// }
-//   },[navigate])
+  //   useEffect(()=>{
+  // if(!userData){
+  //   navigate("/")
+  // }
+  //   },[navigate])
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -206,18 +212,20 @@ const MainLayout = () => {
                     href="#"
                     className="dropdown-item py-1 mb-1"
                     style={{ height: "auto", lineHeight: "20px" }}
-                  >View Profile</Link>
+                  >
+                    View Profile
+                  </Link>
                 </li>
                 <li>
                   <Link
                     href="#"
                     className="dropdown-item py-1 mb-1"
                     style={{ height: "auto", lineHeight: "20px" }}
-                  >Signout</Link>
+                  >
+                    Signout
+                  </Link>
                 </li>
-                <li>
-                 
-                </li>
+                <li></li>
               </div>
             </div>
           </div>
@@ -230,6 +238,17 @@ const MainLayout = () => {
             background: colorBgContainer,
           }}
         >
+          <ToastContainer
+            position="top-right"
+            autoClose={250}
+            hideProgressBar={false}
+            newestOnTop={true}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            theme="light"
+          />
           <Outlet />
           {/* <button onClick={()=>{navigate("/")}}>button</button> */}
         </Content>
