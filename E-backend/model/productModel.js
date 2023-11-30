@@ -22,7 +22,7 @@ let productSchema = new mongoose.Schema(
       type: Number,
       required: [true, "Price is required field"],
     },
-    catagory: {
+    category: {
       type: String,
       required: [true, "Category is required field"],
     },
@@ -40,20 +40,23 @@ let productSchema = new mongoose.Schema(
       default: 0,
       // select: false,
     },
-    images: {
-      type: Array,
-    },
+    images: [
+      {
+        public_id: String,
+        url: String,
+      },
+    ],
     tags: String,
-    // color: [],
-    color: {
-      type: String,
-      //   validate: {
-      //     validator: function (value) {
-      //       return value === "Black" || value === "Brown" || value === "Red";
-      //     },
-      //   },
-      required: [true, "Color is required field"],
-    },
+    color: [],
+    // color: {
+    // type: String,
+    //   validate: {
+    //     validator: function (value) {
+    //       return value === "Black" || value === "Brown" || value === "Red";
+    //     },
+    //   },
+    // required: [true, "Color is required field"],
+    // },
     ratings: [
       {
         star: Number,

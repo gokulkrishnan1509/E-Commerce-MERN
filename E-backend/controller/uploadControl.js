@@ -20,6 +20,16 @@ exports.uploadImages = asyncErrorHandler(async (req, res) => {
   const images = urls.map((file) => {
     return file;
   });
+
+     // const findProduct = await ProductArray.findByIdAndUpdate(
+//   //   id,
+//   //   {
+//   //     images: urls.map((file) => {
+//   //       return file;
+//   //     }),
+//   //   },
+//   //   { new: true }
+//   // );
   res.status(200).json({ images });
 });
 

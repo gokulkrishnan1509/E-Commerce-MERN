@@ -24,6 +24,8 @@ import Dropzone from "react-dropzone";
 import { getBrands } from "../features/brand/brandSlice";
 import { getCategory } from "../features/pcategory/pcategorySlice";
 import { getColorsFromServer } from "../features/color/colorSlice";
+import { uploadImgtoServer, deleteImg } from "../features/upload/uploadSlice";
+import {createProudcts} from "../features/product/productSlice"
 
 let schema = yup.object().shape({
   title: yup.string().required("Title is Required"),
@@ -41,7 +43,11 @@ const Addproduct = () => {
   const { brands } = useSelector((state) => state.brand);
   const { pCategory } = useSelector((state) => state.pcategory);
   const { colors } = useSelector((state) => state.color);
+  const { images } = useSelector((state) => state.upload);
+
+  // *******************************
   const colorsWidget = [];
+  const img = [];
 
   colors.forEach((element) => {
     colorsWidget.push({
@@ -50,18 +56,31 @@ const Addproduct = () => {
     });
   });
 
+  images.forEach((element) =>
+    img.push({
+      public_id: element.public_id,
+      url: element.url,
+    })
+  );
+
+  // ****************************************
+
   useEffect(() => {
     let timeOut = setTimeout(() => {
       dispatch(getBrands());
       dispatch(getCategory());
       dispatch(getColorsFromServer());
-      formik.values.color = color;
     }, 500);
 
     return () => {
       clearTimeout(timeOut);
     };
   }, [dispatch]);
+
+  useEffect(() => {
+    formik.values.color = color;
+    formik.values.images=img
+  }, [color, img]);
 
   const formik = useFormik({
     initialValues: {
@@ -72,10 +91,11 @@ const Addproduct = () => {
       category: "",
       color: "",
       quantity: "",
+      images: "",
     },
     validationSchema: schema,
     onSubmit: (values) => {
-      console.log(values);
+      dispatch(createProudcts(values))
     },
   });
   // const [desc, setDesc] = useState();
@@ -197,7 +217,11 @@ const Addproduct = () => {
               {formik.touched.quantity && formik.errors.quantity}
             </div>
             <div className="bg-white border-1 p-5 text-center">
-              <Dropzone onDrop={(acceptedFiles) => console.log(acceptedFiles)}>
+              <Dropzone
+                onDrop={(acceptedFiles) =>
+                  dispatch(uploadImgtoServer(acceptedFiles))
+                }
+              >
                 {({ getRootProps, getInputProps }) => (
                   <section>
                     <div {...getRootProps()}>
@@ -210,7 +234,23 @@ const Addproduct = () => {
                 )}
               </Dropzone>
             </div>
-
+            <div className="showimages d-flex flex-wrap gap-3">
+              {Array.isArray(images) &&
+                images.length > 0 &&
+                images?.map((i, j) => {
+                  return (
+                    <div className="position-relative" key={j}>
+                      <button
+                        type="button"
+                        onClick={() => dispatch(deleteImg(i?.public_id))}
+                        className="btn-close position-absolute"
+                        style={{ top: "10px", right: "10px" }}
+                      ></button>
+                      <img src={i.url} alt="images" width={200} height={200} />
+                    </div>
+                  );
+                })}
+            </div>
             <button
               type="submit"
               className="btn btn-success border-0 rounded-3 my-5"
