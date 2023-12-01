@@ -30,7 +30,7 @@ export const getOrders = createAsyncThunk(
   async (thunkApi) => {
     try {
       const response = await authService.getOrder();
-      return response["alluserOders"];
+      return response["alluserOrders"];
     } catch (error) {
       return thunkApi.rejectWithValue(error);
     }
@@ -71,8 +71,8 @@ export const authSlice = createSlice({
       .addCase(getOrders.rejected, (state, action) => {
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.error;
         state.isLoading = false;
+        state.message = action.error;
       });
   },
 });

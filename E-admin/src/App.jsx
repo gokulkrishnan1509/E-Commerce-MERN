@@ -21,6 +21,8 @@ import Addblogcat from "./pages/Addblogcat";
 import AddCat from "./pages/Addcat";
 import Addbrand from "./pages/Addbrand";
 import Addproduct from "./pages/Addproduct";
+import Couponlist from "./pages/Couponlist";
+import AddCoupon from "./pages/AddCoupon";
 
 // ************************ Invoked from component folder ****************
 import MainLayout from "./components/MainLayout";
@@ -39,6 +41,8 @@ function App() {
             <Route path="blog-list" element={<Bloglist />} />
             <Route path="blog-category-list" element={<Blogcatalist />} />
             <Route path="orders" element={<Orders />} />
+            <Route path="coupon" element={<AddCoupon />} />
+            <Route path="coupon-list" element={<Couponlist />} />
             <Route path="customers" element={<Customers />} />
             <Route path="color-list" element={<Colorlist />} />
             <Route path="category-list" element={<Categorylist />} />
@@ -49,7 +53,7 @@ function App() {
             <Route path="Color" element={<Color />} />
             <Route path="category" element={<AddCat />} />
             <Route path="brand" element={<Addbrand />} />
-            <Route path="product" element={<Addproduct/>} />
+            <Route path="product" element={<Addproduct />} />
           </Route>
         </Routes>
       </Router>

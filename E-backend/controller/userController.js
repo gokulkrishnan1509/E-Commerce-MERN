@@ -613,16 +613,17 @@ exports.createOrder = asyncErrorHanlder(async (req, res, next) => {
   } catch (error) {}
 });
 // *********************************************************************
-// exports.getOrders = asyncErrorHanlder(async (req, res, next) => {
-//   const { _id } = req.user;
+exports.getOrders = asyncErrorHanlder(async (req, res, next) => {
+  const { _id } = req.user;
 
-//   validateMongoDbId(_id);
-//   const userOrders = await orderModel
-//     .findOne({ orderby: _id })
-//     .populate("products.product")
-//     .exec();
-//     res.json({userOrders})
-// });
+  validateMongoDbId(_id);
+  const userOrders = await orderModel
+    .findOne({ orderby: _id })
+    .populate("products.product")
+    .exec();
+  res.json({ userOrders });
+  console.log(userOrders);
+});
 
 exports.getOrders = asyncErrorHanlder(async (req, res, next) => {
   const { _id } = req.user;
@@ -659,31 +660,38 @@ exports.getOrders = asyncErrorHanlder(async (req, res, next) => {
 
 exports.getAllOrders = asyncErrorHanlder(async (req, res) => {
   try {
-    
-
-     const alluserOders = await orderModel.aggregate([
+    const alluserOrders = await orderModel.aggregate([
       {
-        $lookup:{
-          from:"products",
-          localField:"products.product",
-          foreignField:"_id",
-          as:"products"
-        }
-      },{
-        $lookup:{
-          from:"users",
-          localField:"orderby",
-          foreignField:"_id",
-          as:"orderby"
-        }
-      }
-     ])
+        $lookup: {
+          from: "products",
+          localField: "products.product",
+          foreignField: "_id",
+          as: "products",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "orderby",
+          foreignField: "_id",
+          as: "orderby",
+        },
+      },
+    ]);
 
-    res.status(200).json({alluserOders})
-
+    res.status(200).json({ alluserOrders });
   } catch (error) {}
 });
 
+// exports.getAllOrders = asyncErrorHanlder(async (req, res, next) => {
+//   const alluserOrders = await orderModel
+//     .find()
+//     .populate("products.product")
+//     .populate("orderby")
+//     .exec();
+//   res.json({ alluserOrders });
+//   console.log(userOrders);
+// });
 // ***************************************************************************
 exports.updateOrderStatus = asyncErrorHanlder(async (req, res, next) => {
   const { status } = req.body;

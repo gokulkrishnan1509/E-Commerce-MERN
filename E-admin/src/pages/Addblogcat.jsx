@@ -12,7 +12,7 @@ import * as yup from "yup";
 // ************************** Formik ***************************
 import { useFormik } from "formik";
 
-import { createBlogCate } from "../features/blogcate/blogcateSlice";
+import { createBlogCate, resetState } from "../features/blogcate/blogcateSlice";
 
 let schema = yup.object().shape({
   title: yup.string().required(" Category Name is Required"),
@@ -33,7 +33,7 @@ const Addblogcat = () => {
       dispatch(createBlogCate(value));
       formik.resetForm();
       setTimeout(() => {
-        navigate("/admin/blog-category-list");
+        dispatch(resetState())
       }, 3000);
     },
   });

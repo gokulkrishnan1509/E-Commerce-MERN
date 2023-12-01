@@ -34,7 +34,6 @@ function Orders() {
       clearTimeout(timeOut);
     };
   }, [dispatch]);
-  // console.log(orders)
   const data1 = [];
 
   for (let i = 0; i < orders.length; i++) {
@@ -65,6 +64,7 @@ function Orders() {
     });
   }
 
+  console.log(orders)
   return (
     <>
       <div>

@@ -23,9 +23,10 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 // ************************React Redux*********************
 import { useDispatch, useSelector } from "react-redux";
-import { getBlogCate } from "../features/blogcate/blogcateSlice";
+import { getBlogCate, resetState } from "../features/blogcate/blogcateSlice";
 import { postBlogs } from "../features/blogs/blogSlice";
 import { deleteImg, uploadImgtoServer } from "../features/upload/uploadSlice";
+import { isAllOf } from "@reduxjs/toolkit";
 
 // ***************************yup validation**************************
 
@@ -53,14 +54,14 @@ const Addblog = () => {
     });
   });
   useEffect(() => {
-    if (isSuccess && createdBlog) {
+    if (isSuccess) {
       toast.success("Blog Added Successfully");
-    }
-
-    if (isError) {
+    } else if (isError) {
       toast.error("Something Went Wrong");
+    } else {
+      toast.done("good");
     }
-  }, []);
+  }, [isSuccess, isError, isLoading]);
 
   useEffect(() => {
     let timeOut = setTimeout(() => {
@@ -88,7 +89,7 @@ const Addblog = () => {
       dispatch(postBlogs(values));
       formik.resetForm();
       setTimeout(() => {
-        navigate("/admin/blog-list");
+        navigate(resetState());
       }, 3000);
     },
   });

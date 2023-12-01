@@ -20,7 +20,7 @@ import { ImBlog } from "react-icons/im";
 import { TfiLayoutAccordionList } from "react-icons/tfi";
 import { CgUserList } from "react-icons/cg";
 import { IoIosNotifications } from "react-icons/io";
-
+import { RiCouponLine } from "react-icons/ri";
 // ******************Toaster Component****************
 
 import { ToastContainer } from "react-toastify";
@@ -124,6 +124,23 @@ const MainLayout = () => {
               key: "orders",
               icon: <FaClipboardList className="fs-4" />,
               label: "Orders",
+            },
+            {
+              key: "marketing",
+              icon: <RiCouponLine className="fs-4" />,
+              label: "Marketing",
+              children: [
+                {
+                  key: "coupon",
+                  icon: <ImBlog className="fs-4" />,
+                  label: "Add Coupon",
+                },
+                {
+                  key: "coupon-list",
+                  icon: <RiCouponLine className="fs-4"/>,
+                  label: "Coupon List",
+                },
+              ],
             },
             {
               key: "blog",
