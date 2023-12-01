@@ -18,8 +18,7 @@ export const createBrand = createAsyncThunk(
   async (brandData, thunkAPI) => {
     try {
       const response = await brandService.createBrand(brandData);
-
-      return response;
+      return response.newBrand;
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -28,7 +27,7 @@ export const createBrand = createAsyncThunk(
 
 const initialState = {
   brands: [],
-  createdBrand:"",
+  createdBrandDB:undefined,
   isError: false,
   isLoading: false,
   isSuccess: false,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // ***************Components Folder***************
 import CustomInput from "../components/CustomInput";
 
@@ -6,34 +6,77 @@ import CustomInput from "../components/CustomInput";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
-// *****************Antd design***********************
-import { InboxOutlined } from "@ant-design/icons";
-import { message, Upload } from "antd";
-const { Dragger } = Upload;
+// ***********************Toaster ***************************
+import { toast } from "react-toastify";
 
-const props = {
-  name: "file",
-  multiple: true,
-  action: "https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188",
-  onChange(info) {
-    const { status } = info.file;
-    if (status !== "uploading") {
-    }
-    if (status === "done") {
-      message.success(`${info.file.name} file uploaded successfully.`);
-    } else if (status === "error") {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
-  onDrop(e) {
-  },
-};
+// *************************antd design******************************
+
+import { Select } from "antd";
+
+// ************************React Dropzone*****************
+
+import Dropzone from "react-dropzone";
+// ***************************Router Dom ****************
+import { useNavigate } from "react-router-dom";
+// *****************Formik Form***********************
+import * as yup from "yup";
+import { useFormik } from "formik";
+// ************************React Redux*********************
+import { useDispatch, useSelector } from "react-redux";
+import { getBlogCate } from "../features/blogcate/blogcateSlice";
+import { deleteImg, uploadImgtoServer } from "../features/upload/uploadSlice";
+
+// ***************************yup validation**************************
+
+let schema = yup.object().shape({
+  title: yup.string().required("Title is Required"),
+  description: yup.string().required("Description is Required"),
+  category: yup.string().required("Category is Required"),
+});
 
 const Addblog = () => {
-  const [desc, setDesc] = useState();
-  const handleDesc = (e) => {
-    setDesc(e);
-  };
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { images } = useSelector((state) => state.upload);
+  const { blogcategory } = useSelector((state) => state.blogscategory);
+  useEffect(() => {
+    let timeOut = setTimeout(() => {
+      dispatch(getBlogCate());
+    });
+
+    return () => {
+      clearTimeout(timeOut);
+    };
+  }, [dispatch]);
+  const img = [];
+
+  images.forEach((i) => {
+    img.push({
+      public_id: i.public_id,
+      url: i.url,
+    });
+  });
+
+  useEffect(() => {
+    formik.values.images = img;
+  }, []);
+
+  const formik = useFormik({
+    initialValues: {
+      title: "",
+      description: "",
+      category: "",
+      images: "",
+    },
+    validationSchema: schema,
+    onSubmit: (values) => {
+      dispatch();
+      formik.resetForm();
+      setTimeout(() => {
+        navigate("/");
+      }, 3000);
+    },
+  });
   return (
     <>
       <div>
@@ -47,32 +90,80 @@ const Addblog = () => {
         /> */}
 
         <div className="">
-          <form action="">
-            <Dragger {...props}>
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">
-                Click or drag file to this area to upload
-              </p>
-              <p className="ant-upload-hint">
-                Support for a single or bulk upload. Strictly prohibited from
-                uploading company data or other banned files.
-              </p>
-            </Dragger>
+          <form
+            className="d-flex gap-3 flex-column"
+            onSubmit={formik.handleSubmit}
+          >
             <div className="mt-3">
-              <CustomInput type="text" lable="Enter Blog Title" />
+              <CustomInput
+                type="text"
+                lable="Enter Blog Title"
+                name=""
+                onChange={formik.handleChange("title")}
+                onBlur={formik.handleBlur("title")}
+                val={formik.values.title}
+              />
             </div>
-            <select name="" id="" className="form-control py-3 mb-3">
-              <option value="">Select Blog Category</option>
+            <div className="error">
+              {formik.touched.title && formik.errors.title}
+            </div>
+            <select name="" id="" className="form-control py-3 mb-3 mt-3">
+              <option value="" disabled>
+                Select Blog Category
+              </option>
+              {blogcategory.map((i, j) => {
+                return (
+                  <option key={j} value={i.title}>
+                    {i.title}
+                  </option>
+                );
+              })}
             </select>
             <ReactQuill
               theme="snow"
-              value={desc}
-              onChange={(evt) => {
-                handleDesc(evt);
-              }}
+              name="description"
+              onChange={formik.handleChange("description")}
+              value={formik.values.description}
             />
+
+            <div className="error">
+              {formik.touched.description && formik.errors.description}
+            </div>
+            <div className="bg-white border-1 p-5 text-center">
+              <Dropzone
+                onDrop={(acceptedFiles) =>
+                  dispatch(uploadImgtoServer(acceptedFiles))
+                }
+              >
+                {({ getRootProps, getInputProps }) => (
+                  <section>
+                    <div {...getRootProps()}>
+                      <input {...getInputProps()} />
+                      <p>
+                        Drag 'n' drop some files here, or click to select files
+                      </p>
+                    </div>
+                  </section>
+                )}
+              </Dropzone>
+            </div>
+            <div className="showimages d-flex flex-wrap gap-3">
+              {Array.isArray(images) &&
+                images.length > 0 &&
+                images?.map((i, j) => {
+                  return (
+                    <div className="position-relative" key={j}>
+                      <button
+                        type="button"
+                        onClick={() => dispatch(deleteImg(i?.public_id))}
+                        className="btn-close position-absolute"
+                        style={{ top: "10px", right: "10px" }}
+                      ></button>
+                      <img src={i.url} alt="images" width={200} height={200} />
+                    </div>
+                  );
+                })}
+            </div>
             <button className="btn btn-success border-0 rounded-3 my-5">
               Add Blog
             </button>

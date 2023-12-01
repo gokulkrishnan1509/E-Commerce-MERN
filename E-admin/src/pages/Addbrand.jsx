@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CustomInput from "../components/CustomInput";
 // **************************Redux******************************
 import { useDispatch, useSelector } from "react-redux";
@@ -10,14 +10,29 @@ import { toast } from "react-toastify";
 import * as yup from "yup";
 // ************************** Formik ***************************
 import { useFormik } from "formik";
+
+
+
+
 import { createBrand } from "../features/brand/brandSlice";
 
 let schema = yup.object().shape({
-  title: yup.string().required("Title is Required"),
+  title: yup.string().required("Brand is Required"),
 });
 
 const Addbrand = () => {
-  const {createdBrandDB} = useSelector((state)=>state.product)
+  const { createdBrandDB, isSuccess, isError, isLoading } = useSelector(
+    (state) => state.brand
+  );
+  useEffect(() => {
+    if (isSuccess ) {
+      toast.success("Brand Added Successfully !");
+    }
+    if (isError) {
+      toast.error("Something Went Wrong !");
+    }
+  }, [isSuccess, isError, isLoading]);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const formik = useFormik({
@@ -49,7 +64,7 @@ const Addbrand = () => {
             id="Enterbrand"
           />
           <div className="error">
-          {formik.touched.title && formik.errors.title}
+            {formik.touched.title && formik.errors.title}
           </div>
           <button
             className="btn btn-success border-0 rounded-3 my-5"
