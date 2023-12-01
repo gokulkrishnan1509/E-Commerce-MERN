@@ -17,13 +17,14 @@ import { Select } from "antd";
 
 import Dropzone from "react-dropzone";
 // ***************************Router Dom ****************
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useRouteError } from "react-router-dom";
 // *****************Formik Form***********************
 import * as yup from "yup";
 import { useFormik } from "formik";
 // ************************React Redux*********************
 import { useDispatch, useSelector } from "react-redux";
 import { getBlogCate } from "../features/blogcate/blogcateSlice";
+import { postBlogs } from "../features/blogs/blogSlice";
 import { deleteImg, uploadImgtoServer } from "../features/upload/uploadSlice";
 
 // ***************************yup validation**************************
@@ -39,6 +40,28 @@ const Addblog = () => {
   const navigate = useNavigate();
   const { images } = useSelector((state) => state.upload);
   const { blogcategory } = useSelector((state) => state.blogscategory);
+  const { isSuccess, isError, isLoading, createdBlog } = useSelector(
+    (state) => state.blogs
+  );
+
+  // ***********************************useEffect()**********************
+  const img = [];
+  images.forEach((i) => {
+    img.push({
+      public_id: i.public_id,
+      url: i.url,
+    });
+  });
+  useEffect(() => {
+    if (isSuccess && createdBlog) {
+      toast.success("Blog Added Successfully");
+    }
+
+    if (isError) {
+      toast.error("Something Went Wrong");
+    }
+  }, []);
+
   useEffect(() => {
     let timeOut = setTimeout(() => {
       dispatch(getBlogCate());
@@ -48,19 +71,11 @@ const Addblog = () => {
       clearTimeout(timeOut);
     };
   }, [dispatch]);
-  const img = [];
-
-  images.forEach((i) => {
-    img.push({
-      public_id: i.public_id,
-      url: i.url,
-    });
-  });
 
   useEffect(() => {
     formik.values.images = img;
-  }, []);
-
+  }, [img]);
+  // **********************************************************************
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -70,10 +85,10 @@ const Addblog = () => {
     },
     validationSchema: schema,
     onSubmit: (values) => {
-      dispatch();
+      dispatch(postBlogs(values));
       formik.resetForm();
       setTimeout(() => {
-        navigate("/");
+        navigate("/admin/blog-list");
       }, 3000);
     },
   });
@@ -97,17 +112,25 @@ const Addblog = () => {
             <div className="mt-3">
               <CustomInput
                 type="text"
-                lable="Enter Blog Title"
-                name=""
+                label="Enter Blog Title"
+                name="category"
                 onChange={formik.handleChange("title")}
                 onBlur={formik.handleBlur("title")}
                 val={formik.values.title}
+                id="category"
               />
             </div>
             <div className="error">
               {formik.touched.title && formik.errors.title}
             </div>
-            <select name="" id="" className="form-control py-3 mb-3 mt-3">
+            <select
+              name="category"
+              onChange={formik.handleChange("category")}
+              onBlur={formik.handleBlur("category")}
+              value={formik.values.category}
+              id="category"
+              className="form-control py-3 mb-3 mt-3"
+            >
               <option value="" disabled>
                 Select Blog Category
               </option>
@@ -119,6 +142,9 @@ const Addblog = () => {
                 );
               })}
             </select>
+            <div className="error">
+              {formik.touched.category && formik.errors.category}
+            </div>
             <ReactQuill
               theme="snow"
               name="description"
@@ -164,7 +190,10 @@ const Addblog = () => {
                   );
                 })}
             </div>
-            <button className="btn btn-success border-0 rounded-3 my-5">
+            <button
+              className="btn btn-success border-0 rounded-3 my-5"
+              type="submit"
+            >
               Add Blog
             </button>
           </form>
