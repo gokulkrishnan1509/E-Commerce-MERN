@@ -65,6 +65,7 @@ export const blogCategorySlice = createSlice({
         state.isError = false;
         state.isSuccess = true;
         state.createdBlogCategory = action.payload;
+        
       })
       .addCase(createBlogCate.rejected, (state, action) => {
         state.isLoading = false;

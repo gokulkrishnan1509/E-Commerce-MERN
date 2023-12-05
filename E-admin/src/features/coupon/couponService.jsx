@@ -1,20 +1,20 @@
 import axios from "axios";
 import { base_url } from "../../utils/base_url";
-
+import { config } from "../../utils/axiosConfig";
 // ************************getting token from backend ******************
 
-const getTokenFromLocalStorage = localStorage.getItem("user")
-  ? JSON.parse(localStorage.getItem("user"))
-  : null;
+// const getTokenFromLocalStorage = localStorage.getItem("user")
+//   ? JSON.parse(localStorage.getItem("user"))
+//   : null;
 
-//   ***********************setting bearer token ******************
+// //   ***********************setting bearer token ******************
 
-const config = {
-  headers: {
-    Authorization: `Bearer ${getTokenFromLocalStorage.token}`,
-    Accept: "application/json",
-  },
-};
+// const config = {
+//   headers: {
+//     Authorization: `Bearer ${getTokenFromLocalStorage.token}`,
+//     Accept: "application/json",
+//   },
+// };
 
 // ************************Api's ******************************
 

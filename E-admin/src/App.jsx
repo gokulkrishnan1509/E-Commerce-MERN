@@ -51,8 +51,13 @@ function App() {
             <Route path="blog-add" element={<Addblog />} />
             <Route path="blog-category" element={<Addblogcat />} />
             <Route path="Color" element={<Color />} />
-            <Route path="category" element={<AddCat />} />
+            {/* Brand Component */}
             <Route path="brand" element={<Addbrand />} />
+            <Route path="brand/:id" element={<Addbrand />} />
+            {/* Producy Category */}
+            <Route path="category" element={<AddCat />} />
+            <Route path="category/:id" element={<AddCat />} />
+
             <Route path="product" element={<Addproduct />} />
           </Route>
         </Routes>

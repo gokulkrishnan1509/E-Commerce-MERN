@@ -19,7 +19,7 @@ let schema = yup.object().shape({
 });
 
 const Addblogcat = () => {
-  const { isSuccess, isError, isLoading } = useSelector(
+  const { isSuccess, isError, isLoading,createdBlogCategory } = useSelector(
     (state) => state.blogscategory
   );
   const dispatch = useDispatch();
@@ -38,9 +38,11 @@ const Addblogcat = () => {
     },
   });
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && createdBlogCategory) {
       toast.success("Category Added Successfully");
+      
     }
+    console.log(isSuccess)
 
     if (isError) {
       toast.error("Something Went Wrong");

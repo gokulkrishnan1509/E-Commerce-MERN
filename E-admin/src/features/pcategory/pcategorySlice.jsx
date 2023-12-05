@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, createAction } from "@reduxjs/toolkit";
 import categoryService from "./pcategoryService";
 
 export const getCategory = createAsyncThunk(
@@ -25,10 +25,50 @@ export const createCategoryonServer = createAsyncThunk(
   }
 );
 
+export const deleteProductCateServer = createAsyncThunk(
+  "delete/productcategory",
+  async (id, thunkAPI) => {
+    try {
+      const response = await categoryService.deleteOneCateProduct(id);
+      thunkAPI.dispatch(getCategory());
+
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const getProductCateServer = createAsyncThunk(
+  "getOne/productcate",
+  async (id, thunkAPI) => {
+    try {
+      const response = await categoryService.getOneCateProduct(id);
+      return response.getCategoryById;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const updateProductCateServer = createAsyncThunk(
+  "updateOne/productcate",
+  async (data, thunkAPI) => {
+    try {
+      const response = await categoryService.updateCateProduct(data);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+
+export const resetState = createAction("RevertAll");
 const initialState = {
   pCategory: [],
   isError: false,
-  createdCategories: "",
+
   isLoading: false,
   isSuccess: false,
   message: "",
@@ -69,7 +109,54 @@ export const categorySlice = createSlice({
         state.isLoading = false;
         state.isSuccess = false;
         state.message = action.error;
-      });
+      })
+      .addCase(deleteProductCateServer.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteProductCateServer.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.deleteProductCate = action.payload;
+      })
+      .addCase(deleteProductCateServer.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(getProductCateServer.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getProductCateServer.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.getProuduct = action.payload.title;
+        // console.log(state.getProuduct)
+      })
+      .addCase(getProductCateServer.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(updateProductCateServer.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateProductCateServer.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.updatedProduct = action.payload;
+      })
+      .addCase(updateProductCateServer.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(resetState, () => initialState);
   },
 });
 

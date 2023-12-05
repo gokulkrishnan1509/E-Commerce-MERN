@@ -214,7 +214,7 @@ exports.forgotPassword = asyncErrorHanlder(async (req, res, next) => {
   const resetUrl = `${req.protocol}://${req.get(
     "host"
   )}/user/resetpassword/${resetToken}`;
-  const message = `we have received a password reset request. please use below link to reset you password\n\n${resetUrl}\n\n this link vald for 10 minutes`;
+  const message = `we have received a password reset request. please use below link to reset you password\n\n${resetUrl}\n\n this link valid for 10 minutes`;
   try {
     await sendEmail({
       email: findUser.email,

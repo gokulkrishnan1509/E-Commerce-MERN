@@ -63,7 +63,7 @@ const Addproduct = () => {
   const { createProudctsinDb, isSuccess, isError, isLoading } = useSelector((state) => state.product);
 
   useEffect(() => {
-    if (isSuccess ) {
+    if (isSuccess && createProudctsinDb ) {
       toast.success("Product Added Successfully !");
     }
     if (isError) {
