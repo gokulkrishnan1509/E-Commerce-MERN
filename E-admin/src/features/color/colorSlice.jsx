@@ -1,6 +1,5 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, createAction } from "@reduxjs/toolkit";
 import colorService from "./colorService";
-// import { createColor } from "../../../../E-backend/controller/colorController";
 export const getColorsFromServer = createAsyncThunk(
   "color/get-colors",
   async (thunkApi) => {
@@ -24,6 +23,46 @@ export const createColorToDb = createAsyncThunk(
     }
   }
 );
+
+export const getOneColorFromDb = createAsyncThunk(
+  "color/get-one-color",
+  async (id, thunkApi) => {
+    try {
+      const response = await colorService.getOneColor(id);
+      return response.getOneColorId;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const updateColorToServer = createAsyncThunk(
+  "color/update-color",
+  async (data, thunkApi) => {
+    try {
+      const response = await colorService.updateOnecolor(data);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteColorFromServer = createAsyncThunk(
+  "color/delete-color",
+  async (id, thunkApi) => {
+    try {
+      const response = await colorService.deleteColor(id);
+      thunkApi.dispatch(getColorsFromServer());
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const resetState = createAction("RevertAll");
+
 const initialState = {
   colors: [],
   createdColor: "",
@@ -68,7 +107,53 @@ export const colorSlice = createSlice({
         state.isError = true;
         state.isSuccess = false;
         state.message = action.error;
-      });
+      })
+      .addCase(getOneColorFromDb.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getOneColorFromDb.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.colorTitle = action.payload.title;
+      })
+      .addCase(getOneColorFromDb.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(updateColorToServer.pending, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(updateColorToServer.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.updatedColor = action.payload;
+      })
+      .addCase(updateColorToServer.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(deleteColorFromServer.pending, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(deleteColorFromServer.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.deletedProduct = action.payload;
+      })
+      .addCase(deleteColorFromServer.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.message = action.payload;
+      })
+      .addCase(resetState, () => initialState);
   },
 });
 

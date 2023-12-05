@@ -54,7 +54,7 @@ const AddCat = () => {
     if (isError) {
       toast.error("Something Went Wrong");
     }
-  }, []);
+  }, [isSuccess,updatedProduct,createdCategories]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const formik = useFormik({
@@ -75,7 +75,7 @@ const AddCat = () => {
         formik.resetForm();
         setTimeout(() => {
           dispatch(resetState());
-        }, 3000);
+        }, 300);
       }
     },
   });

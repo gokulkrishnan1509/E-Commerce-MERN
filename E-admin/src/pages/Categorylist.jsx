@@ -49,7 +49,10 @@ const Categorylist = function () {
       name: pCategory[i].title,
       action: (
         <>
-          <Link to={`/admin/category/${pCategory[i]._id}`} className="fs-3 text-danger">
+          <Link
+            to={`/admin/category/${pCategory[i]._id}`}
+            className="fs-3 text-danger"
+          >
             <BiEdit />
           </Link>
           <button
@@ -72,6 +75,7 @@ const Categorylist = function () {
   }, [dispatch]);
 
   const deleteProductCate = (e) => {
+    
     dispatch(deleteProductCateServer(e));
     setOpen(false);
   };
@@ -89,7 +93,7 @@ const Categorylist = function () {
           performAction={() => {
             deleteProductCate(pCateId);
           }}
-          title="Are you sure you wnat to delete this Product Category?"
+          title="Are you sure you want to delete this Product Category?"
         />
       </div>
     </>
