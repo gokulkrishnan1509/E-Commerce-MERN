@@ -5,6 +5,7 @@ const {
   getAllCoupons,
   updateCoupons,
   deleteCoupons,
+  getOneCoupons,
 } = require("../controller/couponController");
 const { restrict, protect } = require("../controller/userController");
 
@@ -22,4 +23,8 @@ router
 router
   .route("/delete-coupon/:id")
   .delete(protect, restrict("admin", "super admin"), deleteCoupons);
+
+router
+  .route("/get-coupon/:id")
+  .get(protect, restrict("admin", "super admin"), getOneCoupons);
 module.exports = router;

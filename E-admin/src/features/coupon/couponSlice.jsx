@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, createAction } from "@reduxjs/toolkit";
 import couponService from "./couponService";
 
 // const getUserfromLocalStorage = localStorage.getItem("user")
@@ -36,7 +36,45 @@ export const postCouponFromServer = createAsyncThunk(
     }
   }
 );
+export const getOneCouponfromServer = createAsyncThunk(
+  "coupon/get-One",
+  async (id, thunkApi) => {
+    try {
+      const response = await couponService.getOneCoupon(id);
+      return response.oneCoupon;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
 
+export const updateOneCouponToserver = createAsyncThunk(
+  "coupon/update",
+  async (data, thunkApi) => {
+    try {
+      const response = await couponService.updateOneCoupon(data);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteOneCouponToserver = createAsyncThunk(
+  "coupon/delete",
+  async (id, thunkApi) => {
+    try {
+      const response = await couponService.deleteOneCoupon(id);
+      thunkApi.dispatch(getCouponFromServer())
+
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const resetState = createAction("Reset_all");
 export const couponSlice = createSlice({
   name: "coupon",
   initialState,
@@ -54,9 +92,9 @@ export const couponSlice = createSlice({
       })
       .addCase(getCouponFromServer.rejected, (state, action) => {
         state.isLoading = false;
-        state.isError = false;
+        state.isError = true;
         state.isSuccess = false;
-        state.message = action.message;
+        state.message = action.error;
       })
       .addCase(postCouponFromServer.pending, (state) => {
         state.isLoading = true;
@@ -72,7 +110,53 @@ export const couponSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = false;
         state.message = action.error;
-      });
+      })
+      .addCase(getOneCouponfromServer.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getOneCouponfromServer.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.dataCoupon = action.payload;
+      })
+      .addCase(getOneCouponfromServer.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(deleteOneCouponToserver.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteOneCouponToserver.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.deletedCoupon = action.payload;
+      })
+      .addCase(deleteOneCouponToserver.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(updateOneCouponToserver.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateOneCouponToserver.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.updateCoupon = action.payload;
+      })
+      .addCase(updateOneCouponToserver.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(resetState, () => initialState);
   },
 });
 

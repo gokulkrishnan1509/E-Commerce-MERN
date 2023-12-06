@@ -19,9 +19,27 @@ const createBlog = async (blog) => {
   return response.data;
 };
 
+const getOneBlogCate = async(id)=>{
+  const response = await axios.get(`${base_url}blogcategory/getone-blogcategory/${id}`,config);
+  return response.data
+}
+
+const updateOneBlogCate = async(data)=>{
+  const response = await axios.patch(`${base_url}blogcategory/update-blogcategory/${data.id}`,config);
+  return response.data
+}
+
+const deleteOneBlog = async(id)=>{
+  const response = await axios.delete(`${base_url}blogcategory/delete-blogcategory/${id}`,config);
+  return response.data
+}
+
 const blogCateSerivce = {
   getBlogCate,
   createBlog,
+  getOneBlogCate,
+  updateOneBlogCate,
+  deleteOneBlog
 };
 
 export default blogCateSerivce;

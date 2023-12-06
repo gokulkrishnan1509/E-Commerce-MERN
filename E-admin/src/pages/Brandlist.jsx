@@ -108,7 +108,7 @@ const Brandlist = function () {
           performAction={() => {
             deleteBrand(brandId);
           }}
-          title={"Are you sure you wnat to delete this brand?"}
+          title={"Are you sure you want to delete this brand?"}
         />
       </div>
     </>

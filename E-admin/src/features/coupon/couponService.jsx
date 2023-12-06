@@ -33,9 +33,41 @@ const postCoupon = async (coupon) => {
   return response.data;
 };
 
+const getOneCoupon = async (id) => {
+  const response = await axios.get(
+    `${base_url}coupon/get-coupon/${id}`,
+    config
+  );
+
+  return response.data;
+};
+
+const updateOneCoupon = async (data) => {
+  const response = await axios.patch(
+    `${base_url}coupon/update-coupon/${data.id}`,
+    {
+      name: data.couponData?.name,
+      expiry: data.couponData?.expiry,
+      discount: data.couponDate?.discount,
+    },
+    config
+  );
+  return response.data;
+};
+
+const deleteOneCoupon = async (id) => {
+  const response = await axios.delete(
+    `${base_url}coupon/delete-coupon/${id}`,
+    config
+  );
+  return response.data;
+};
 const couponService = {
   getCoupon,
   postCoupon,
+  getOneCoupon,
+  updateOneCoupon,
+  deleteOneCoupon,
 };
 
 export default couponService;

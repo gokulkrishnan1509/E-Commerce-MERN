@@ -39,9 +39,7 @@ function App() {
             <Route index element={<DashBoard />} />
             <Route path="enquiries" element={<Enquirires />} />
             <Route path="blog-list" element={<Bloglist />} />
-            <Route path="blog-category-list" element={<Blogcatalist />} />
             <Route path="orders" element={<Orders />} />
-            <Route path="coupon" element={<AddCoupon />} />
             <Route path="coupon-list" element={<Couponlist />} />
             <Route path="customers" element={<Customers />} />
             <Route path="color-list" element={<Colorlist />} />
@@ -49,10 +47,13 @@ function App() {
             <Route path="list-brand" element={<Brandlist />} />
             <Route path="product-list" element={<Productlist />} />
             <Route path="blog-add" element={<Addblog />} />
+            {/* blog-category */}
             <Route path="blog-category" element={<Addblogcat />} />
-
+            <Route path="blog-category/:id" element={<Addblogcat/>}/>
+            {/* Coupon */}
+            <Route path="coupon" element={<AddCoupon />} />
+            <Route path="coupon/:id" element={<AddCoupon />} />
             {/* Color */}
-
             <Route path="Color" element={<Color />} />
             <Route path="Color/:id" element={<Color />} />
             {/* Brand Component */}
@@ -61,7 +62,11 @@ function App() {
             {/* Producy Category */}
             <Route path="category" element={<AddCat />} />
             <Route path="category/:id" element={<AddCat />} />
+            {/* b */}
 
+            <Route path="blog-category-list" element={<Blogcatalist />} />
+
+                 
             <Route path="product" element={<Addproduct />} />
           </Route>
         </Routes>

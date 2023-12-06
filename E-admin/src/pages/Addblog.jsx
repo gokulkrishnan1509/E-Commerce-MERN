@@ -114,11 +114,11 @@ const Addblog = () => {
               <CustomInput
                 type="text"
                 label="Enter Blog Title"
-                name="category"
+                name="title"
                 onChange={formik.handleChange("title")}
                 onBlur={formik.handleBlur("title")}
                 val={formik.values.title}
-                id="category"
+                id="title"
               />
             </div>
             <div className="error">

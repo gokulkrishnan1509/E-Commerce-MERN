@@ -12,19 +12,35 @@ import * as yup from "yup";
 // ************************** Formik ***************************
 import { useFormik } from "formik";
 
-import { createBlogCate, resetState } from "../features/blogcate/blogcateSlice";
+import {
+  createBlogCate,
+  getOneBlogCateFromServer,
+  resetState,
+} from "../features/blogcate/blogcateSlice";
 
 let schema = yup.object().shape({
   title: yup.string().required(" Category Name is Required"),
 });
 
 const Addblogcat = () => {
-  const { isSuccess, isError, isLoading,createdBlogCategory } = useSelector(
+  const { isSuccess, isError, isLoading, createdBlogCategory } = useSelector(
     (state) => state.blogscategory
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const getBlogCateId = location.pathname.split("/")[3];
+
+  useEffect(() => {
+    if (getBlogCateId !== undefined) {
+      dispatch(getOneBlogCateFromServer(getBlogCateId));
+    } else {
+      dispatch(resetState());
+    }
+  }, [getBlogCateId]);
+
   const formik = useFormik({
+    enableReinitialize: true,
+
     initialValues: {
       title: "",
     },
@@ -33,16 +49,14 @@ const Addblogcat = () => {
       dispatch(createBlogCate(value));
       formik.resetForm();
       setTimeout(() => {
-        dispatch(resetState())
+        dispatch(resetState());
       }, 3000);
     },
   });
   useEffect(() => {
     if (isSuccess && createdBlogCategory) {
       toast.success("Category Added Successfully");
-      
     }
-    console.log(isSuccess)
 
     if (isError) {
       toast.error("Something Went Wrong");
