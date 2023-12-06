@@ -30,7 +30,7 @@ export const getOneBlogCateFromServer = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await blogCateSerivce.getOneBlogCate(id);
-      return response;
+      return response.getOneCategory;
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -107,7 +107,6 @@ export const blogCategorySlice = createSlice({
         state.isError = true;
         state.isSuccess = false;
         state.message = action.error;
-        console.log(state.message);
       })
       .addCase(getOneBlogCateFromServer.pending, (state) => {
         state.isLoading = true;
@@ -116,7 +115,7 @@ export const blogCategorySlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.getOneBlog = action.payload;
+        state.getOneBlog = action.payload.title;
       })
       .addCase(getOneBlogCateFromServer.rejected, (state, action) => {
         state.isLoading = false;

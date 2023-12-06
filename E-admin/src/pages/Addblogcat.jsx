@@ -16,6 +16,7 @@ import {
   createBlogCate,
   getOneBlogCateFromServer,
   resetState,
+  updateOneBlogCateFromServer,
 } from "../features/blogcate/blogcateSlice";
 
 let schema = yup.object().shape({
@@ -23,9 +24,14 @@ let schema = yup.object().shape({
 });
 
 const Addblogcat = () => {
-  const { isSuccess, isError, isLoading, createdBlogCategory } = useSelector(
-    (state) => state.blogscategory
-  );
+  const {
+    isSuccess,
+    isError,
+    isLoading,
+    createdBlogCategory,
+    getOneBlog,
+    updatedBlog,
+  } = useSelector((state) => state.blogscategory);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const getBlogCateId = location.pathname.split("/")[3];
@@ -42,15 +48,21 @@ const Addblogcat = () => {
     enableReinitialize: true,
 
     initialValues: {
-      title: "",
+      title: getOneBlog || "",
     },
     validationSchema: schema,
     onSubmit: (value) => {
-      dispatch(createBlogCate(value));
-      formik.resetForm();
-      setTimeout(() => {
+      if (getBlogCateId !== undefined) {
+        const data = { id: getBlogCateId, brandData: value };
+        dispatch(updateOneBlogCateFromServer(data));
         dispatch(resetState());
-      }, 3000);
+      } else {
+        dispatch(createBlogCate(value));
+        formik.resetForm();
+        setTimeout(() => {
+          dispatch(resetState());
+        }, 300);
+      }
     },
   });
   useEffect(() => {
@@ -58,6 +70,10 @@ const Addblogcat = () => {
       toast.success("Category Added Successfully");
     }
 
+    if (updatedBlog && isSuccess) {
+      toast.success("Blog Category Successfully");
+      navigate("/admin/blog-category-list");
+    }
     if (isError) {
       toast.error("Something Went Wrong");
     }
@@ -66,7 +82,9 @@ const Addblogcat = () => {
   return (
     <>
       <div>
-        <h3 className="mb-4 title">Add Blog Category</h3>
+        <h3 className="mb-4 title">
+          {getBlogCateId !== undefined ? "Edit" : "Add"} Blog Category
+        </h3>
         <div>
           <form onSubmit={formik.handleSubmit}>
             <CustomInput
@@ -84,7 +102,9 @@ const Addblogcat = () => {
               className="btn btn-success border-0 rounded-3 my-5"
               type="submit"
             >
-              Add Blog Category
+              {getBlogCateId !== undefined
+                ? " Edit Blog Category"
+                : "Add Blog Category"}
             </button>
           </form>
         </div>

@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk,createAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, createAction } from "@reduxjs/toolkit";
 import blogService from "./blogService";
 export const getBlogs = createAsyncThunk("blog/get-blog", async (thunkAPI) => {
   try {
@@ -15,6 +15,42 @@ export const postBlogs = createAsyncThunk(
     try {
       const response = await blogService.createBlog(blog);
       return response.newBlog;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const getOneBlogFromServer = createAsyncThunk(
+  "blog/get-one",
+  async (id, thunkAPI) => {
+    try {
+      const response = await blogService.getBlog(id);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const updateOneBlogToServer = createAsyncThunk(
+  "blog/update-one",
+  async (data, thunkAPI) => {
+    try {
+      const response = await blogService.updateBlog(data);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteOneBlogToServer = createAsyncThunk(
+  "blog/delete-one",
+  async (id, thunkAPI) => {
+    try {
+      const response = await blogService.deleteBlog(id);
+      return response;
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -56,8 +92,7 @@ export const blogSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(postBlogs.fulfilled, (state, action) => {
-        state.isLoading = false, 
-        state.isSuccess = true;
+        (state.isLoading = false), (state.isSuccess = true);
         state.isError = false;
         state.createdBlog = action.payload;
       })
@@ -66,7 +101,8 @@ export const blogSlice = createSlice({
         state.isError = true;
         state.isSuccess = false;
         state.message = action.error;
-      }).addCase(resetState,()=>initialState)
+      })
+      .addCase(resetState, () => initialState);
   },
 });
 
