@@ -46,10 +46,13 @@ function App() {
             <Route path="category-list" element={<Categorylist />} />
             <Route path="list-brand" element={<Brandlist />} />
             <Route path="product-list" element={<Productlist />} />
+
+            {/* blog */}
+            <Route path="blog-add/:id" element={<Addblog />} />
             <Route path="blog-add" element={<Addblog />} />
             {/* blog-category */}
             <Route path="blog-category" element={<Addblogcat />} />
-            <Route path="blog-category/:id" element={<Addblogcat/>}/>
+            <Route path="blog-category/:id" element={<Addblogcat />} />
             {/* Coupon */}
             <Route path="coupon" element={<AddCoupon />} />
             <Route path="coupon/:id" element={<AddCoupon />} />
@@ -66,7 +69,6 @@ function App() {
 
             <Route path="blog-category-list" element={<Blogcatalist />} />
 
-                 
             <Route path="product" element={<Addproduct />} />
           </Route>
         </Routes>

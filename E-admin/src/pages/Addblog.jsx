@@ -17,16 +17,19 @@ import { Select } from "antd";
 
 import Dropzone from "react-dropzone";
 // ***************************Router Dom ****************
-import { useNavigate, useRouteError } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 // *****************Formik Form***********************
 import * as yup from "yup";
 import { useFormik } from "formik";
 // ************************React Redux*********************
 import { useDispatch, useSelector } from "react-redux";
 import { getBlogCate, resetState } from "../features/blogcate/blogcateSlice";
-import { postBlogs } from "../features/blogs/blogSlice";
+import {
+  getOneBlogFromServer,
+  postBlogs,
+  updateOneBlogToServer,
+} from "../features/blogs/blogSlice";
 import { deleteImg, uploadImgtoServer } from "../features/upload/uploadSlice";
-import { isAllOf } from "@reduxjs/toolkit";
 
 // ***************************yup validation**************************
 
@@ -39,11 +42,23 @@ let schema = yup.object().shape({
 const Addblog = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const blogId = location.pathname.split("/")[3];
+
   const { images } = useSelector((state) => state.upload);
   const { blogcategory } = useSelector((state) => state.blogscategory);
-  const { isSuccess, isError, isLoading, createdBlog } = useSelector(
-    (state) => state.blogs
-  );
+  const {
+    isSuccess,
+    isError,
+    isLoading,
+    createdBlog,
+    updatedBlog,
+    blogName,
+    blogDesc,
+    blogCategory,
+    blogImages,
+  } = useSelector((state) => state.blogs);
 
   // ***********************************useEffect()**********************
   const img = [];
@@ -53,13 +68,26 @@ const Addblog = () => {
       url: i.url,
     });
   });
+
   useEffect(() => {
-    if (isSuccess) {
-      toast.success("Blog Added Successfully");
-    } else if (isError) {
-      toast.error("Something Went Wrong");
+    if (blogId !== undefined) {
+      dispatch(getOneBlogFromServer(blogId));
+      img.push(blogImages)
     } else {
-      toast.done("good");
+      dispatch(resetState());
+    }
+  }, [blogId]);
+
+  useEffect(() => {
+    if (isSuccess && createdBlog) {
+      toast.success("Blog Added Successfully");
+    }
+
+    if (isSuccess && updatedBlog) {
+      toast.success("Blog Updated Successfully");
+    }
+    if (isError) {
+      toast.error("Something Went Wrong");
     }
   }, [isSuccess, isError, isLoading]);
 
@@ -75,28 +103,38 @@ const Addblog = () => {
 
   useEffect(() => {
     formik.values.images = img;
-  }, [img]);
+  }, []);
   // **********************************************************************
   const formik = useFormik({
+    enableReinitialize: true,
+
     initialValues: {
-      title: "",
-      description: "",
-      category: "",
+      title: blogName || "",
+      description: blogDesc || "",
+      category: blogCategory || "",
       images: "",
     },
     validationSchema: schema,
     onSubmit: (values) => {
-      dispatch(postBlogs(values));
-      formik.resetForm();
-      setTimeout(() => {
-        navigate(resetState());
-      }, 3000);
+      if (blogId !== undefined) {
+        const data = { id: blogId, branData: values };
+        dispatch(updateOneBlogToServer(data));
+        dispatch(resetState());
+      } else {
+        dispatch(postBlogs(values));
+        formik.resetForm();
+        setTimeout(() => {
+          navigate(resetState());
+        }, 300);
+      }
     },
   });
   return (
     <>
       <div>
-        <h3 className="mb-4 title">Add Blog</h3>
+        <h3 className="mb-4 title">
+          {blogId !== undefined ? "Update" : "Add"} Blog
+        </h3>
         {/* <Stepper
           steps={[
             { label: "Add Blog Details " },
@@ -195,7 +233,7 @@ const Addblog = () => {
               className="btn btn-success border-0 rounded-3 my-5"
               type="submit"
             >
-              Add Blog
+              {blogId !== undefined ? "Update" : "Add"} Blog
             </button>
           </form>
         </div>

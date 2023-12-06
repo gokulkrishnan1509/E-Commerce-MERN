@@ -22,8 +22,15 @@ const deleteBlog = async (id) => {
 };
 
 const updateBlog = async (data) => {
+  console.log(data)
   const response = await axios.patch(
     `${base_url}blog/blog-update/${data.id}`,
+    {
+      title: data.branData.title,
+      description: data.branData.description,
+      category: data.branData.category,
+      images:data.branData.images
+    },
     config
   );
   return response.data;
