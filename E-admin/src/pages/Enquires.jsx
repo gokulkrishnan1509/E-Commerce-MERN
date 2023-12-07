@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 // *******************Antd Design***********************
 import { Table } from "antd";
 // ************************React Redux*********************
@@ -8,9 +8,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 // **************************React Icon *****************
-import { AiFillDelete } from "react-icons/ai";
+import { AiFillDelete, AiOutlineEye } from "react-icons/ai";
 
-import { getEnquiry } from "../features/enquiry/enquirySlice";
+import {
+  deleteOneEnquiryFromServer,
+  getEnquiry,
+  resetState,
+} from "../features/enquiry/enquirySlice";
+import CustomModel from "../components/CustomModel";
 
 const columns = [
   { title: "SNo", dataIndex: "Key" },
@@ -24,10 +29,25 @@ const columns = [
 
 const Enquires = () => {
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
+  const [enqId, setenqId] = useState("");
+  const showModal = (e) => {
+    setOpen(true);
+    setenqId(e);
+  };
+  const hideModal = () => {
+    setOpen(false);
+  };
+  const deleteEnquiry = (id) => {
+    dispatch(deleteOneEnquiryFromServer(id));
+    setOpen(false);
+  };
+
   const { enquiries } = useSelector((state) => state.enquery);
   useEffect(() => {
     let timeOut = setTimeout(() => {
       dispatch(getEnquiry());
+      dispatch(resetState());
     });
     return () => {
       clearTimeout(timeOut);
@@ -50,9 +70,19 @@ const Enquires = () => {
       ),
       action: (
         <>
-          <Link className="ms-3 fs-3 text-danger">
-            <AiFillDelete />
+          <Link
+            className="ms-3 fs-3 text-danger"
+            to={`/admin/enquiries/${enquiries[i]._id}`}
+          >
+            <AiOutlineEye />
           </Link>
+
+          <button
+            className="ms-3 fs-3 text-danger bg-transparent border-0"
+            onClick={() => showModal(enquiries[i]._id)}
+          >
+            <AiFillDelete />
+          </button>
         </>
       ),
     });
@@ -65,6 +95,14 @@ const Enquires = () => {
         <div>
           <Table columns={columns} dataSource={data1} rowKey={"Key"} />
         </div>
+        <CustomModel
+          hideModal={hideModal}
+          open={open}
+          performAction={() => {
+            deleteEnquiry(enqId);
+          }}
+          title="Are you sure you want to delete this Enquiry?"
+        />
       </div>
     </>
   );

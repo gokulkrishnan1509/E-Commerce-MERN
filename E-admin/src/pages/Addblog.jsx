@@ -72,11 +72,11 @@ const Addblog = () => {
   useEffect(() => {
     if (blogId !== undefined) {
       dispatch(getOneBlogFromServer(blogId));
-      img.push(blogImages)
+      img.push(blogImages);
     } else {
       dispatch(resetState());
     }
-  }, [blogId]);
+  }, [blogId,blogImages]);
 
   useEffect(() => {
     if (isSuccess && createdBlog) {
@@ -135,13 +135,6 @@ const Addblog = () => {
         <h3 className="mb-4 title">
           {blogId !== undefined ? "Update" : "Add"} Blog
         </h3>
-        {/* <Stepper
-          steps={[
-            { label: "Add Blog Details " },
-            { label: "Upload Images" },
-            { label: "Finish" },
-          ]}activeStep={2}
-        /> */}
 
         <div className="">
           <form

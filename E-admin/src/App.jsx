@@ -26,6 +26,8 @@ import AddCoupon from "./pages/AddCoupon";
 
 // ************************ Invoked from component folder ****************
 import MainLayout from "./components/MainLayout";
+// **********************************Util's**************************
+import ViewEnq from "./utils/ViewEnquires";
 
 function App() {
   return (
@@ -37,7 +39,6 @@ function App() {
           <Route path="forgot-password" element={<Forgotpassword />} />
           <Route path="admin" element={<MainLayout />}>
             <Route index element={<DashBoard />} />
-            <Route path="enquiries" element={<Enquirires />} />
             <Route path="blog-list" element={<Bloglist />} />
             <Route path="orders" element={<Orders />} />
             <Route path="coupon-list" element={<Couponlist />} />
@@ -46,30 +47,31 @@ function App() {
             <Route path="category-list" element={<Categorylist />} />
             <Route path="list-brand" element={<Brandlist />} />
             <Route path="product-list" element={<Productlist />} />
+            <Route path="blog-category-list" element={<Blogcatalist />} />
+            <Route path="product" element={<Addproduct />} />
 
-            {/* blog */}
+            {/* ******************Enquirires************* */}
+            <Route path="enquiries/:id" element={<ViewEnq />} />
+            <Route path="enquiries" element={<Enquirires />} />
+
+            {/* ***************blog******************  */}
             <Route path="blog-add/:id" element={<Addblog />} />
             <Route path="blog-add" element={<Addblog />} />
-            {/* blog-category */}
+            {/******************** blog-category ******************/}
             <Route path="blog-category" element={<Addblogcat />} />
             <Route path="blog-category/:id" element={<Addblogcat />} />
-            {/* Coupon */}
+            {/*************************** Coupon ************************/}
             <Route path="coupon" element={<AddCoupon />} />
             <Route path="coupon/:id" element={<AddCoupon />} />
-            {/* Color */}
+            {/************************** Color ************************/}
             <Route path="Color" element={<Color />} />
             <Route path="Color/:id" element={<Color />} />
-            {/* Brand Component */}
+            {/**********************  Brand Component ********************************/}
             <Route path="brand" element={<Addbrand />} />
             <Route path="brand/:id" element={<Addbrand />} />
-            {/* Producy Category */}
+            {/**************************** * Producy Category *************/}
             <Route path="category" element={<AddCat />} />
             <Route path="category/:id" element={<AddCat />} />
-            {/* b */}
-
-            <Route path="blog-category-list" element={<Blogcatalist />} />
-
-            <Route path="product" element={<Addproduct />} />
           </Route>
         </Routes>
       </Router>
