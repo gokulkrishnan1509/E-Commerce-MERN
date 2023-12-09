@@ -13,6 +13,7 @@ import { AiFillDelete, AiOutlineEye } from "react-icons/ai";
 import {
   deleteOneEnquiryFromServer,
   getEnquiry,
+  getUpdateEnqiryFromServer,
   resetState,
 } from "../features/enquiry/enquirySlice";
 import CustomModel from "../components/CustomModel";
@@ -43,6 +44,11 @@ const Enquires = () => {
     setOpen(false);
   };
 
+  const setEnquiryStatus = (e, id) => {
+    const data = { id: id, enqData: e };
+
+    dispatch(getUpdateEnqiryFromServer(data));
+  };
   const { enquiries } = useSelector((state) => state.enquery);
   useEffect(() => {
     let timeOut = setTimeout(() => {
@@ -63,8 +69,19 @@ const Enquires = () => {
       date: new Date(enquiries[i].createdAt).toLocaleString(),
       status: (
         <>
-          <select name="" id="" className="form-control form-select">
-            <option value="">Select</option>
+          <select
+            name=""
+            id=""
+            defaultValue={
+              enquiries[i].status ? enquiries[i].status : "Submitted"
+            }
+            className="form-control form-select"
+            onChange={(e) => setEnquiryStatus(e.target.value, enquiries[i]._id)}
+          >
+            <option value="Submitted">Submitted</option>
+            <option value="Contacted">Contacted</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Resolved">Resolved</option>
           </select>
         </>
       ),

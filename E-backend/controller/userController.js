@@ -410,7 +410,7 @@ exports.unblockUser = asyncErrorHanlder(async (req, res, next) => {
     res.status(404).json({ message: error.message });
   }
 });
-
+// *********************************************************************
 exports.updatePassword = asyncErrorHanlder(async (req, res, next) => {
   const { _id } = req.user;
   const { password } = req.body;
@@ -681,6 +681,50 @@ exports.getAllOrders = asyncErrorHanlder(async (req, res) => {
 
     res.status(200).json({ alluserOrders });
   } catch (error) {}
+});
+
+exports.getOrderByUserId = asyncErrorHanlder(async (req, res) => {
+  const { id } = req.params;
+  validateMongoDbId(id);
+  try {
+    // const userOrders = await orderModel.aggregate([
+    //   { $match: { orderby: new mongoose.Types.ObjectId(id) } },
+    //   {
+    //     $lookup: {
+    //       from: "products",
+    //       localField: "products.product",
+    //       foreignField: "_id",
+    //       as: "product",
+    //     },
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: "users",
+    //       localField: "orderby",
+    //       foreignField: "_id",
+    //       as: "orderby",
+    //     },
+    //   },
+    // ]);
+
+    // if (userOrders.length === 0) {
+    //   const error = new CustomError("No orders found for the user", 404);
+    //   return next(error);
+    // }
+
+    // const firstUserOrder = userOrders[0];
+
+    // res.status(200).json({userOrders:firstUserOrder});
+
+    const userOrders = await orderModel
+      .findOne({ orderby: id })
+      .populate("products.product")
+      .populate("orderby").exec()
+
+      res.json({userOrders})
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 });
 
 // exports.getAllOrders = asyncErrorHanlder(async (req, res, next) => {

@@ -1,7 +1,13 @@
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getOneEnquiryFromServer } from "../features/enquiry/enquirySlice";
+import {
+  deleteOneEnquiryFromServer,
+  getEnquiry,
+  getOneEnquiryFromServer,
+  getUpdateEnqiryFromServer,
+  resetState,
+} from "../features/enquiry/enquirySlice";
 import { BiArrowBack } from "react-icons/bi";
 
 const ViewEnq = () => {
@@ -14,18 +20,29 @@ const ViewEnq = () => {
   );
   useEffect(() => {
     dispatch(getOneEnquiryFromServer(getEnqId));
-  }, [getEnqId]);
+  }, [getEnqId,enqStatus]);
 
-  const goBack=()=>{
-    navigate(-1)
-  }
+  const setEnquiryStatus = (e, id) => {
+    const data = { id: id, enqData: e };
+    dispatch(getUpdateEnqiryFromServer(data))
+     
+  };
+
+  const goBack = () => {
+    navigate(-1);
+  };
   return (
     <>
       <div>
         <div className="d-flex justify-content-between align-items-center">
-        <h3 className="mb-4 title">View Enquiry</h3>
+          <h3 className="mb-4 title">View Enquiry</h3>
 
-            <button className="bg-transparent border-0  d-flex align-items-center gap-1 fs-5 " onClick={goBack} ><BiArrowBack className="fs-5 mb-0"/>  Go Back</button>
+          <button
+            className="bg-transparent border-0  d-flex align-items-center gap-1 fs-5 "
+            onClick={goBack}
+          >
+            <BiArrowBack className="fs-5 mb-0" /> Go Back
+          </button>
         </div>
         <div className="mt-5 bg-white p-4 rounded-3">
           <div className="d-flex align-items-center gap-3">
@@ -55,7 +72,8 @@ const ViewEnq = () => {
                 name=""
                 className="form-control form-select"
                 id=""
-                defaultValue={enqStatus?enqStatus:"Submitted"}
+                defaultValue={enqStatus ? enqStatus : "Submitted"}
+                onChange={(e) => setEnquiryStatus(e.target.value, getEnqId)}
               >
                 <option value="Submitted">Submitted</option>
                 <option value="Contacted">Contacted</option>

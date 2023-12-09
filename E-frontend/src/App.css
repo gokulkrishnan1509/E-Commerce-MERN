@@ -10,6 +10,7 @@ body {
 
 /* -------------------------------------------- */
 
+
 @media only screen and (max-width: 650px) {
   .section {
     overflow: scroll !important;
@@ -77,6 +78,11 @@ body {
 }
 .gr-3 {
   width: 24%;
+}
+
+.error{
+
+  color: red;
 }
 /* ----------------------------------------------- */
 /* Header Part */

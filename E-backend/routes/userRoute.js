@@ -27,6 +27,7 @@ const {
   getOrders,
   updateOrderStatus,
   getAllOrders,
+  getOrderByUserId,
 } = require("../controller/userController");
 
 router.route("/post").post(createUser);
@@ -69,5 +70,9 @@ router
 router
   .route("/getall-orders")
   .get(protect, restrict("admin", "super admin"), getAllOrders);
+
+router
+  .route("/getorderbyuser/:id")
+  .post(protect, restrict("admin", "super admin"), getOrderByUserId);
 
 module.exports = router;

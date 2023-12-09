@@ -16,6 +16,7 @@ const getOneEnquiry = async (id) => {
 const updateEnquiry = async (data) => {
   const response = await axios.patch(
     `${base_url}query/update-query/${data.id}`,
+    {status:data.enqData},
     config
   );
   return response.data;

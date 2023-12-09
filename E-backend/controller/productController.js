@@ -81,8 +81,6 @@ exports.getAllProduct = asyncErrorHandler(async (req, res) => {
 exports.addToWishList = asyncErrorHandler(async (req, res, next) => {
   const { _id } = req.user;
   const { prodId } = req.body;
-  console.log(prodId);
-
   const user = await userArray.findById(_id);
 
   if (!user) {

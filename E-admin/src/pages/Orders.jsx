@@ -37,18 +37,23 @@ function Orders() {
   const data1 = [];
 
   for (let i = 0; i < orders.length; i++) {
+    // console.log(orders[i].)
     data1.push({
       Key: i + 1,
       name: orders[i].orderby[0].name,
-      product: orders[i].products.map((i,j) => {
-        return (
-          // <>
-            <ul key={j}>
-              <li>{i.title}</li>
-            </ul>
-          // </>s
-        );
-      }),
+      // product: orders[i].products.map((i, j) => {
+      //   return (
+      //     // <>
+      //     <ul key={j}>
+      //       <li>{i.title}</li>
+      //     </ul>
+      //     // </>s
+      //   );
+      // }),
+      
+      product: (
+        <Link to={`/admin/orders/${orders[i].orderby[0]._id}`}  style={{textDecoration:"none",fontFamily:"Roboto,sans-serif"}}>View User Orders </Link>
+      ),
       amount: orders[i].paymentIntent.amount,
       date: new Date(orders[i].createdAt).toLocaleDateString(),
       action: (

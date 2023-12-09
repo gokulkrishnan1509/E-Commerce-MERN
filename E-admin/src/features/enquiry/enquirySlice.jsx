@@ -1,11 +1,14 @@
 import { createSlice, createAsyncThunk, createAction } from "@reduxjs/toolkit";
 import enquiryService from "./enquiryService";
 
+export const resetState = createAction("Revert_All");
+
 export const getEnquiry = createAsyncThunk(
   "enquery/getEnquery",
   async (thunkAPI) => {
     try {
       const response = await enquiryService.getAllEnquiry();
+
       return response["getAllQuery"];
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
@@ -29,6 +32,8 @@ export const getUpdateEnqiryFromServer = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const response = await enquiryService.updateEnquiry(data);
+      thunkAPI.dispatch(resetState());
+      thunkAPI.dispatch(getEnquiry());
       return response;
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
@@ -42,14 +47,13 @@ export const deleteOneEnquiryFromServer = createAsyncThunk(
     try {
       const response = await enquiryService.deleteEnquiry(id);
       thunkAPI.dispatch(getEnquiry());
+
       return response;
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
   }
 );
-
-export const resetState = createAction("RevertAll");
 
 const initialState = {
   enquiries: [],

@@ -1,15 +1,28 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
 import ReactStars from "react-rating-stars-component";
 import ProductCard from "../components/ProductCard";
 import Color from "../components/Color";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllProductsfromServer } from "../../features/products/productSlice";
 const OurStore = () => {
   const [grid, setGrid] = useState(3);
-
+  const {Products}  =useSelector((state)=>state.product)
+  const dispatch = useDispatch();
+  const getProduct = () => {
+  dispatch(getAllProductsfromServer());
+ 
+  };
   useEffect(() => {
-  }, []);
+    let timeOut = setTimeout(() => {
+      getProduct();
+    }, 500);
 
+    return () => {
+      clearTimeout(timeOut);
+    };
+  }, []);
 
   return (
     <>
@@ -88,7 +101,7 @@ const OurStore = () => {
                 <h5 className="filter-title">Colors</h5>
 
                 <div>
-                <Color/>
+                  <Color />
                 </div>
                 <h5 className="sub-title">Size</h5>
                 <div>
@@ -196,9 +209,14 @@ const OurStore = () => {
                     <p className="mb-0 d-block" style={{ width: "100px" }}>
                       Sort By:
                     </p>
-                    <select defaultValue={"manual"} name="" className="form-control form-select" id="">
+                    <select
+                      defaultValue={"manual"}
+                      name=""
+                      className="form-control form-select"
+                      id=""
+                    >
                       {/* <option disabled value="manual">Select</option> */}
-                      <option  value="manual">Featured</option>
+                      <option value="manual">Featured</option>
                       <option value="best-selling">Best selling</option>
                       <option value="title-ascending">
                         Alphabetically, A-Z
@@ -258,12 +276,9 @@ const OurStore = () => {
                 </div>
               </div>
               <div className="products-list pb-5">
-
                 <div className="d-flex gap-10 flex-wrap">
-                <ProductCard  grid={grid}/>
-
+                  <ProductCard data={Products} grid={grid} />
                 </div>
-                
               </div>
             </div>
           </div>

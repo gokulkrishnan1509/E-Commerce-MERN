@@ -28,6 +28,7 @@ import AddCoupon from "./pages/AddCoupon";
 import MainLayout from "./components/MainLayout";
 // **********************************Util's**************************
 import ViewEnq from "./utils/ViewEnquires";
+import ViewOrder from "./utils/ViewOrder";
 
 function App() {
   return (
@@ -40,7 +41,6 @@ function App() {
           <Route path="admin" element={<MainLayout />}>
             <Route index element={<DashBoard />} />
             <Route path="blog-list" element={<Bloglist />} />
-            <Route path="orders" element={<Orders />} />
             <Route path="coupon-list" element={<Couponlist />} />
             <Route path="customers" element={<Customers />} />
             <Route path="color-list" element={<Colorlist />} />
@@ -49,6 +49,9 @@ function App() {
             <Route path="product-list" element={<Productlist />} />
             <Route path="blog-category-list" element={<Blogcatalist />} />
             <Route path="product" element={<Addproduct />} />
+
+            <Route path="orders" element={<Orders />} />
+            <Route path="orders/:id" element={<ViewOrder />} />
 
             {/* ******************Enquirires************* */}
             <Route path="enquiries/:id" element={<ViewEnq />} />

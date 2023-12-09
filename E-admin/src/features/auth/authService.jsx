@@ -34,9 +34,18 @@ const getOrder = async () => {
   return response["data"];
 };
 
+const getUserOrder = async (id) => {
+  const response = await axios.post(
+    `${base_url}user/getorderbyuser/${id}`,
+    "",
+    config
+  );
+  return response.data;
+};
 const authService = {
   login,
   getOrder,
+  getUserOrder,
 };
 
 export default authService;

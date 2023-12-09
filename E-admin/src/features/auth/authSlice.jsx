@@ -37,6 +37,17 @@ export const getOrders = createAsyncThunk(
   }
 );
 
+export const getUserOrderFromServer =createAsyncThunk(
+  "order/getone-orders",async(id,thunkApi)=>{
+    try{
+      const response = await authService.getUserOrder(id)
+        return response.userOrders
+    }catch(error){
+      return thunkApi.rejectWithValue(error)
+    }
+  }
+)
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -73,7 +84,20 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.isLoading = false;
         state.message = action.error;
-      });
+      }).addCase(getUserOrderFromServer.pending,(state)=>{
+        state.isLoading=true;
+        
+      }).addCase(getUserOrderFromServer.fulfilled,(state,action)=>{
+        state.isLoading=false;
+        state.isSuccess=true;
+        state.isError=false;
+        state.userOrder =action.payload
+      }).addCase(getUserOrderFromServer.rejected,(state,action)=>{
+        state.isError=true;
+        state.isSuccess=false;
+        state.isLoading=false;
+        state.message=action.error
+      })
   },
 });
 
