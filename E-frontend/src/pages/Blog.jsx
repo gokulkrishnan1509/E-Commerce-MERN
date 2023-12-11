@@ -1,8 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Meta from "../components/Meta";
 import BreadCrumb from "../components/BreadCrumb";
 import BlogCards from "../components/BlogCards";
+import { useSelector, useDispatch } from "react-redux";
+import { getAllBlogs } from "../../features/blogs/blogSlice";
+import moment from "moment";
+
 function Blog() {
+  const dispatch = useDispatch();
+
+  const { blog } = useSelector((state) => state?.blog);
+
+
+  useEffect(() => {
+    const timeOut = setTimeout(() => {
+      dispatch(getAllBlogs());
+    }, 300);
+
+    return () => {
+      clearTimeout(timeOut);
+    };
+  }, []);
+
+
   return (
     <>
       <Meta title={"Blogs"}></Meta>
@@ -23,18 +43,21 @@ function Blog() {
             </div>
             <div className="col-9">
               <div className="row">
-                <div className="col-6 mb-3">
-                  <BlogCards />
-                </div>
-                <div className="col-6 mb-3">
-                  <BlogCards />
-                </div>
-                <div className="col-6 mb-3">
-                  <BlogCards />
-                </div>
-                <div className="col-6 mb-3">
-                  <BlogCards />
-                </div>
+                {blog?.map((data, index) => {
+                  return (
+                    <div className="col-6 mb-3" key={index}>
+                      <BlogCards
+                        id={data?._id}
+                        title={data?.title}
+                        description={data?.description}
+                        image={data?.images[0]?.url}
+                        date={moment(data?.createdAt).format(
+                          "YYYY-MM-DD, h:mm a"
+                        )}
+                      />
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

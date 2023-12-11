@@ -122,6 +122,7 @@ exports.ratingfunc = asyncErrorHandler(async (req, res, next) => {
     (userId) => userId.postedby.toString() === _id.toString()
   );
 
+
   if (alreadyRated) {
     await ProductArray.updateOne(
       {

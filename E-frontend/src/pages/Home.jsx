@@ -1,13 +1,45 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
 import Marquee from "react-fast-marquee";
 import BlogCards from "../components/BlogCards";
 import ProductCard from "../components/ProductCard";
 import SpecialProducts from "../components/SpecialProducts";
 import Container from "../components/Container";
 import { services } from "../utils/Data";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllBlogs } from "../../features/blogs/blogSlice";
+import moment from "moment";
+import { getAllProductsfromServer } from "../../features/products/productSlice";
+// *******************************************************************import { Link, useLocation, useNavigate } from "react-router-dom";
+// import Prodcompare from "../images/prodcompare.svg";
+import Wish from "../images/wish.svg";
+import WishList from "../images/wishlist.svg";
+// import Watch from "../images/watch.jpg";
+// import Watch2 from "../images/speaker.jpg";
+import addCart from "../images/add-cart.svg";
+import view from "../images/view.svg";
+import { addProductToWishlist } from "../../features/products/productSlice";
+import { Link, useNavigate } from "react-router-dom";
+import ReactStars from "react-rating-stars-component";
 
 function Home() {
+  const dispatch = useDispatch();
+  const { blog } = useSelector((state) => state?.blog);
+  const { Products } = useSelector((state) => state?.product);
+  useEffect(() => {
+    const timeOut = setTimeout(() => {
+      dispatch(getAllBlogs());
+      dispatch(getAllProductsfromServer());
+    }, 300);
+
+    return () => {
+      clearTimeout(timeOut);
+    };
+  }, []);
+  // **************************Add to Wishlist******************************
+  const addToWishlist = (id) => {
+    dispatch(addProductToWishlist(id));
+  };
+
   return (
     <>
       <Container class1="home-wrapper-1 py-5">
@@ -119,7 +151,7 @@ function Home() {
           </div>
         </div>
       </Container>
-     
+
       <section className="home-wrapper-2 py-5">
         <div className="container-xxl">
           <div className="row">
@@ -280,11 +312,22 @@ function Home() {
             </div>
           </div>
           <div className="row ">
-            <SpecialProducts></SpecialProducts>
-            <SpecialProducts></SpecialProducts>
-
-            <SpecialProducts></SpecialProducts>
-            <SpecialProducts></SpecialProducts>
+            {Products &&
+              Products?.map((data, index) => {
+                if (data?.tags === "special") {
+                  return (
+                    <SpecialProducts
+                      key={index}
+                      title={data?.title}
+                      brand={data?.brand}
+                      totalrating={data?.totalrating}
+                      price={data?.price}
+                      sold={data?.sold}
+                      quantity={data?.quantity}
+                    />
+                  );
+                }
+              })}
           </div>
         </div>
       </section>
@@ -292,12 +335,79 @@ function Home() {
       <section className="popular-wrapper py-5 home-wrapper-2">
         <div className="container-xxl">
           <div className="row">
-            <div className="col-12">
+            <div className="col-3">
               <div className="section-heading">Our Popular Products</div>
             </div>
             <div className="row">
-              <ProductCard />
-              <ProductCard />
+              {Array.isArray(Products) &&
+                Products?.map((item, index) => {
+                  if (item.tags === "popluar") {
+                    return (
+                      <div key={index} className={"col-3"}>
+                        <div className="product-card position-relative ">
+                          <div className="wishlist-icon position-absolute">
+                            <button
+                              className="border-0 bg-transparent"
+                              onClick={() => {
+                                addToWishlist(item?._id);
+                              }}
+                            >
+                              <img src={Wish} alt="wishlist" />
+                            </button>
+                          </div>
+                          <div className="product-image">
+                            <img
+                              src={item?.images[0]?.url}
+                              className="img-fluid  mx-auto"
+                              width={160}
+                              alt="product-image"
+                            />
+                            <img
+                              // src={item?.images[0]?.url}
+                              className="img-fluid  mx-auto"
+                              width={160}
+                              alt="product-image"
+                            />
+                          </div>
+                          <div className="product-details">
+                            <h6 className="brand">{item?.brand}</h6>
+                            <h5 className="product-title">{item?.title}</h5>
+                            <ReactStars
+                              count={5}
+                              size={24}
+                              value={Number(item?.totalrating)}
+                              edit={false}
+                              activeColor="#ffd700"
+                            ></ReactStars>
+                            {/* <p
+                              className={`description ${
+                                grid === 12 ? "d-block" : "d-none"
+                              }`}
+                              dangerouslySetInnerHTML={{
+                                __html: item?.description,
+                              }}
+                            ></p> */}
+                            <p className="price">{item?.price}</p>
+                          </div>
+                          <div className="action-bar position-absolute">
+                            <div className="d-flex flex-column gap-15">
+                              <Link>
+                                <img src={addCart} alt="products" />
+                              </Link>
+                              <Link>
+                                <img src={view} alt="products" />
+                              </Link>
+
+                              <Link>
+                                <img src={addCart} alt="products" />
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                })}
             </div>
           </div>
         </div>
@@ -348,18 +458,24 @@ function Home() {
             </div>
           </div>
           <div className="row">
-            <div className="col-3">
-              <BlogCards />
-            </div>
-            <div className="col-3">
-              <BlogCards />
-            </div>
-            <div className="col-3">
-              <BlogCards />
-            </div>
-            <div className="col-3">
-              <BlogCards />
-            </div>
+            {blog &&
+              blog.map((item, index) => {
+                if (index < 3) {
+                  return (
+                    <div className="col-3 " key={index}>
+                      <BlogCards
+                        id={item?._id}
+                        title={item?.title}
+                        description={item?.description}
+                        image={item?.images[0]?.url}
+                        date={moment(item?.createdAt).format(
+                          "YYYY-MM-DD,h:mm a"
+                        )}
+                      />
+                    </div>
+                  );
+                }
+              })}
           </div>
         </div>
       </section>

@@ -11,6 +11,7 @@ import view from "../images/view.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { addProductToWishlist } from "../../features/products/productSlice";
 
+
 const ProductCard = (props) => {
   const { grid, data } = props;
   const navigate = useNavigate();

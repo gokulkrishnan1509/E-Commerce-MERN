@@ -28,6 +28,18 @@ export const loginToserver = createAsyncThunk(
   }
 );
 
+export const getUserWislistFromServer = createAsyncThunk(
+  "auth/wishlist",
+  async (thunkAPI) => {
+    try {
+      const response = await authService.getUserWislist();
+      return response.getBlog;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 const getCustomerfromLocalStorage = localStorage.getItem("customer")
   ? JSON.parse(localStorage.getItem("customer"))
   : null;
@@ -82,6 +94,21 @@ export const authSlice = createSlice({
         }
       })
       .addCase(loginToserver.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(getUserWislistFromServer.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getUserWislistFromServer.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.userWishListData = action.payload;
+      })
+      .addCase(getUserWislistFromServer.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
