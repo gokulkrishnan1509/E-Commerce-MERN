@@ -47,11 +47,11 @@ const {wishlist} = userWishListData ||{}
                     src="images/cross.svg"
                     alt="cross"
                     className="position-absolute cross img-fluid"
-                    onClick={()=>{removeFromWishlist(item._id)}}
+                    onClick={()=>{removeFromWishlist(item?._id)}}
                   />
                   <div className="wishlist-card-image bg-white">
                     <img
-                      src={item?.images[0].url}
+                      src={item?.images[0]?.url}
                       className="img-fluid d-block  mx-auto "
                       alt="watch"
                       width={160}

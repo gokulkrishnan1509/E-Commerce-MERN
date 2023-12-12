@@ -25,6 +25,7 @@ function Home() {
   const dispatch = useDispatch();
   const { blog } = useSelector((state) => state?.blog);
   const { Products } = useSelector((state) => state?.product);
+  const navigate = useNavigate();
   useEffect(() => {
     const timeOut = setTimeout(() => {
       dispatch(getAllBlogs());
@@ -226,10 +227,75 @@ function Home() {
             <div className="col-12">
               <h3 className="section-heading">Featured Collection</h3>
             </div>
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
+            {Array.isArray(Products) &&
+                Products?.map((item, index) => {
+                  if (item.tags === "features") {
+                    return (
+                      <div key={index} className={"col-3"}>
+                        <div className="product-card position-relative ">
+                          <div className="wishlist-icon position-absolute">
+                            <button
+                              className="border-0 bg-transparent"
+                              onClick={() => {
+                                addToWishlist(item?._id);
+                              }}
+                            >
+                              <img src={Wish} alt="wishlist" />
+                            </button>
+                          </div>
+                          <div className="product-image">
+                            <img
+                              src={item?.images[0]?.url}
+                              className="img-fluid  mx-auto"
+                              width={160}
+                              alt="product-image"
+                            />
+                            <img
+                              // src={item?.images[0]?.url}
+                              className="img-fluid  mx-auto"
+                              width={160}
+                              alt="product-image"
+                            />
+                          </div>
+                          <div className="product-details">
+                            <h6 className="brand">{item?.brand}</h6>
+                            <h5 className="product-title">{item?.title}</h5>
+                            <ReactStars
+                              count={5}
+                              size={24}
+                              value={Number(item?.totalrating)}
+                              edit={false}
+                              activeColor="#ffd700"
+                            ></ReactStars>
+                            {/* <p
+                              className={`description ${
+                                grid === 12 ? "d-block" : "d-none"
+                              }`}
+                              dangerouslySetInnerHTML={{
+                                __html: item?.description,
+                              }}
+                            ></p> */}
+                            <p className="price">{item?.price}</p>
+                          </div>
+                          <div className="action-bar position-absolute">
+                            <div className="d-flex flex-column gap-15">
+                              <Link>
+                                <img src={addCart} alt="products" />
+                              </Link>
+                              <Link  to={`/product/${item?._id}`}>
+                                <img src={view} alt="products" />
+                              </Link>
+
+                              <Link>
+                                <img src={addCart} alt="products" />
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                })}
           </div>
         </div>
       </section>
@@ -318,6 +384,7 @@ function Home() {
                   return (
                     <SpecialProducts
                       key={index}
+                      id={data?._id}
                       title={data?.title}
                       brand={data?.brand}
                       totalrating={data?.totalrating}

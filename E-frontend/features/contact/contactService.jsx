@@ -1,5 +1,6 @@
 import axios from "axios";
 import { config } from "../../src/utils/axiosConfig";
+import { base_url } from "../../src/utils/base_url";
 
 const postQuery = async function (contactData) {
   const response = await axios.post(
@@ -11,6 +12,9 @@ const postQuery = async function (contactData) {
   }
 };
 
-export const contactService = {
+ const contactService = {
   postQuery,
 };
+
+
+export default contactService;

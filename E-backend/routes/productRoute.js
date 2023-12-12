@@ -15,9 +15,7 @@ const { uploadPhoto, productImgResize } = require("../utils/uploadImages");
 const { protect, restrict } = require("../controller/userController");
 
 // *************************These routes are access by admin*************
-router
-  .route("/product-id/:id")
-  .get(protect, restrict("admin", "super admin"), getProduct);
+router.route("/product-id/:id").get(getProduct);
 router
   .route("/product-update/:id")
   .patch(protect, restrict("admin", "super admin"), updateProduct);
@@ -42,8 +40,8 @@ router
 //   );
 
 // router
-  // .route("/delete-img/:id")
-  // .delete(protect, restrict("admin", "super admin"), deleteImages);
+// .route("/delete-img/:id")
+// .delete(protect, restrict("admin", "super admin"), deleteImages);
 // ******************get all product************************************
 router.route("/all-product").get(getAllProduct);
 

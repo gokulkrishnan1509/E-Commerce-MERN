@@ -7,14 +7,14 @@ export const createQuerytoServer = createAsyncThunk(
   async (contactData, thunkAPI) => {
     try {
       const response = await contactService.postQuery(contactData);
-      return response;
+      return response.newEnquiry;
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
   }
 );
 const initialState = {
-  contact: [],
+  contact: "",
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -35,6 +35,7 @@ export const contactSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.contact = action.payload;
+        console.log(state.contact)
       })
       .addCase(createQuerytoServer.rejected, (state, action) => {
         state.isError = true;

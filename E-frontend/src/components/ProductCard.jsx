@@ -1,8 +1,8 @@
 import React from "react";
 import ReactStars from "react-rating-stars-component";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import Prodcompare from "../images/prodcompare.svg";
 import Wish from "../images/wish.svg";
+import Prodcompare from "../images/prodcompare.svg";
 import WishList from "../images/wishlist.svg";
 import Watch from "../images/watch.jpg";
 import Watch2 from "../images/speaker.jpg";
@@ -31,16 +31,7 @@ const ProductCard = (props) => {
             }`}
           >
             <div
-              // onClick={() => {
-              //   const newPath = `${
-              //     location.pathname == "/"
-              //       ? "/product/:id"
-              //       : location.pathname == "/product/:id"
-              //       ? "/product/:id"
-              //       : ":id"
-              //   }`;
-              //   navigate(newPath);
-              // }}
+             
               className="product-card position-relative"
             >
               <div className="wishlist-icon position-absolute">
@@ -67,6 +58,7 @@ const ProductCard = (props) => {
                   alt="product-image"
                 />
               </div>
+
               <div className="product-details">
                 <h6 className="brand">{item?.brand}</h6>
                 <h5 className="product-title">{item?.title}</h5>
@@ -87,10 +79,10 @@ const ProductCard = (props) => {
               </div>
               <div className="action-bar position-absolute">
                 <div className="d-flex flex-column gap-15">
-                  <Link>
+                  <Link >
                     <img src={addCart} alt="products" />
-                  </Link>
-                  <Link>
+                  </Link >
+                  <Link to={`/product/${item?._id}`} >
                     <img src={view} alt="products" />
                   </Link>
 

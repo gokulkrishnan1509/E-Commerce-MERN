@@ -4,16 +4,35 @@ import Meta from "../components/Meta";
 import ProductCard from "../components/ProductCard";
 import ReactStars from "react-rating-stars-component";
 import Color from "../components/Color";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { TbGitCompare } from "react-icons/tb";
 import { AiOutlineHeart } from "react-icons/ai";
+import { getSingleProductFromServer } from "../../features/products/productSlice";
+import { useDispatch, useSelector } from "react-redux";
 // import ReactImageZoom from "react-image-zoom";
 
 const SingleProduct = function () {
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const getProductId = location.pathname.split("/")[2];
+  const { singleProduct } = useSelector((state) => state.product);
+
+  useEffect(() => {
+    let timeOut = setTimeout(() => {
+      dispatch(getSingleProductFromServer(getProductId));
+    }, 300);
+
+    return () => {
+      clearTimeout(timeOut);
+    };
+  }, [getProductId]);
+
   const props = {
     width: 400,
     height: 250,
-    img: "https://th.bing.com/th?id=OIP.2d6tc6uG5uYH2BdeJPfYfgHaHa&w=250&h=250&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=3.1&rm=2",
+    img: singleProduct?.images[0]?.url
+      ? singleProduct?.images[0]?.url
+      : "https://www.thewowstyle.com/wp-content/uploads/2015/01/green-nature-backgrounds.jpeg",
   };
   const [orderedProduct, setOrderedProduct] = useState(true);
   useEffect(() => {}, []);
@@ -37,7 +56,7 @@ const SingleProduct = function () {
                 <div>
                   <img
                     src={props.img}
-                    alt="Product"
+                    alt={singleProduct?.brand}
                     width={props.width}
                     height={props.height}
                   />
@@ -45,16 +64,32 @@ const SingleProduct = function () {
               </div>
               <div className="other-product-images d-flex gap-15 flex-wrap">
                 <div>
-                  <img src={props.img} alt="watch" className="img-fluid" />
+                  <img
+                    src={props.img}
+                    alt={singleProduct?.brand}
+                    className="img-fluid"
+                  />
                 </div>
                 <div>
-                  <img src={props.img} alt="watch" className="img-fluid" />
+                  <img
+                    src={props.img}
+                    alt={singleProduct?.brand}
+                    className="img-fluid"
+                  />
                 </div>
                 <div>
-                  <img src={props.img} alt="watch" className="img-fluid" />
+                  <img
+                    src={props.img}
+                    alt={singleProduct?.brand}
+                    className="img-fluid"
+                  />
                 </div>
                 <div>
-                  <img src={props.img} alt="watch" className="img-fluid" />
+                  <img
+                    src={props.img}
+                    alt={singleProduct?.brand}
+                    className="img-fluid"
+                  />
                 </div>
               </div>
             </div>
@@ -62,10 +97,10 @@ const SingleProduct = function () {
             <div className="col-6">
               <div className="main-product-details">
                 <div className="border-bottom">
-                  <h3 className="title">Watch</h3>
+                  <h3 className="title">{singleProduct?.title}</h3>
                 </div>
                 <div className="border-bottom py-3">
-                  <p className="price">$ 100</p>
+                  <p className="price">$ {singleProduct?.price}</p>
                   <div className="d-flex align-items-center gap-10">
                     <ReactStars
                       count={5}
@@ -87,11 +122,17 @@ const SingleProduct = function () {
                   </div>
                   <div className="d-flex gap-10 align-items-center my-2">
                     <h3 className="product-heading">Brand:</h3>{" "}
-                    <p className="product-data">Gdd</p>
+                    <p className="product-data">{singleProduct?.brand}</p>
                   </div>
+
                   <div className="d-flex gap-10 align-items-center my-2">
                     <h3 className="product-heading">Catagory:</h3>{" "}
-                    <p className="product-data">Gdd</p>
+                    <p className="product-data">{singleProduct?.category}</p>
+                  </div>
+
+                  <div className="d-flex gap-10 align-items-center my-2">
+                    <h3 className="product-heading">Tags :</h3>
+                    <p className="product-data">{singleProduct?.tags}</p>
                   </div>
                   <div className="d-flex gap-10 align-items-center my-2">
                     <h3 className="product-heading">Availablity:</h3>{" "}
@@ -170,12 +211,12 @@ const SingleProduct = function () {
                     <a
                       href="#"
                       onClick={() => {
-                        copyToClipboard(
-                          "https://th.bing.com/th?id=OIP.2d6tc6uG5uYH2BdeJPfYfgHaHa&w=250&h=250&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=3.1&rm=2"
-                        );
+                        copyToClipboard(window.location.href);
                       }}
                       className="a"
-                    >Copy Product Link</a>
+                    >
+                      Copy Product Link
+                    </a>
                   </div>
                 </div>
               </div>
@@ -191,12 +232,11 @@ const SingleProduct = function () {
               <h4>Description</h4>
 
               <div className="bg-white p-3">
-                <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi
-                  est cupiditate dignissimos nulla nesciunt et doloremque
-                  similique. Iste perspiciatis, repellendus magni eius, fugit
-                  autem sapiente ab nostrum doloribus hic obcaecati?
-                </p>
+                <p
+                  dangerouslySetInnerHTML={{
+                    __html: singleProduct?.description.substr(0, 70),
+                  }}
+                ></p>
               </div>
             </div>
           </div>
@@ -215,7 +255,7 @@ const SingleProduct = function () {
                       <ReactStars
                         count={5}
                         size={24}
-                        value={3}
+                        value={parseInt(singleProduct?.totalrating) || 0}
                         edit={false}
                         activeColor="#ffd700"
                       />
