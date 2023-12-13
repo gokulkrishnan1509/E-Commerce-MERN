@@ -511,7 +511,6 @@ exports.userCart = asyncErrorHanlder(async (req, res) => {
   const { _id } = req.user;
   validateMongoDbId(_id);
 
-
   try {
     let newCart = await new cartModel({
       userId: _id,
@@ -572,6 +571,44 @@ exports.getUserCart = asyncErrorHanlder(async (req, res, next) => {
   // }
 
   res.status(200).json({ cart });
+});
+
+// ***********************************************************************
+exports.removeProductFromCart = asyncErrorHanlder(async (req, res) => {
+  const { _id } = req.user;
+  const { id } = req.params;
+  validateMongoDbId(_id);
+  try {
+    const deleteProductFromCart = await cartModel.deleteOne({
+      userId: _id,
+      _id: id,
+    });
+
+    if (!deleteProductFromCart) {
+      return res.status(404).json({ message: "Product not found in the cart" });
+    } else {
+      return res.status(200).json({ message: "Prouct removed from cart" });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+});
+
+// ***********************************************************************
+
+exports.updateProductQuantityFromCart = asyncErrorHanlder(async (req, res) => {
+  const { _id } = req.user;
+  const { id, newQuantity } = req.params;
+  validateMongoDbId(_id);
+  try {
+    const cartItem = await cartModel.findOne({ userId: _id, _id: id });
+    cartItem.quantity = newQuantity;
+    await cartItem.save();
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 });
 // *************************************************************************
 exports.emptyCart = asyncErrorHanlder(async (req, res, next) => {

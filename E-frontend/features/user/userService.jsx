@@ -50,12 +50,20 @@ const getUserCart = async () => {
   }
 };
 
+const removeProductCart = async  function(id){
+  const response = await axios.delete(`${base_url}user/delete-usercart/${id}`,config)
+  if(response.data){
+    return response.data
+  }
+}
+
 const authService = {
   register,
   login,
   getUserWislist,
   addToCart,
   getUserCart,
+  removeProductCart
 };
 
 export default authService;

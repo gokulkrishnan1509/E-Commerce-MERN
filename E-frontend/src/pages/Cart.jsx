@@ -4,7 +4,7 @@ import Meta from "../components/Meta";
 import watch from "../images/watch.jpg";
 import { AiFillDelete } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import { getUserCartFromServer } from "../../features/user/userSlice";
+import { deletUserCartFromServer, getUserCartFromServer } from "../../features/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 function Cart() {
@@ -20,7 +20,6 @@ function Cart() {
   }, []);
 
   const { getUserCartProduct } = useSelector((state) => state.auth);
-  console.log(getUserCartProduct);
   return (
     <>
       <Meta title={"Cart"} />
@@ -79,15 +78,22 @@ function Cart() {
                             id=""
                             min={1}
                             max={10}
-                            value={item?.quantity}
+                            defaultValue={item?.quantity}
                           />
                         </div>
-                        <div>
-                          <AiFillDelete className="text-danger" />
+                        <div  onClick={() => {
+                              dispatch(deletUserCartFromServer(item?._id));
+                            }}>
+                          <AiFillDelete
+                           
+                            className="text-danger"
+                          />
                         </div>
                       </div>
                       <div className="cart-col-4">
-                        <h5 className="price">{item?.price * item?.quantity}</h5>
+                        <h5 className="price">
+                          {item?.price * item?.quantity}
+                        </h5>
                       </div>
                     </div>
                   );
