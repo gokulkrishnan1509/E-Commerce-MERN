@@ -31,7 +31,7 @@ const getUserWislist = async () => {
 };
 
 const addToCart = async (cartData) => {
-  console.log(cartData)
+  console.log(cartData);
   const response = await axios.patch(
     `${base_url}user/user-cart`,
     cartData,
@@ -42,11 +42,20 @@ const addToCart = async (cartData) => {
   }
 };
 
+const getUserCart = async () => {
+  const response = await axios.get(`${base_url}user/user-getcart`, config);
+
+  if (response.data) {
+    return response.data;
+  }
+};
+
 const authService = {
   register,
   login,
   getUserWislist,
   addToCart,
+  getUserCart,
 };
 
 export default authService;

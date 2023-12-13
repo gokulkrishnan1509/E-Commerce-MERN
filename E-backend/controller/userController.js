@@ -511,7 +511,6 @@ exports.userCart = asyncErrorHanlder(async (req, res) => {
   const { _id } = req.user;
   validateMongoDbId(_id);
 
-  console.log(productId,color,quantity,price)
 
   try {
     let newCart = await new cartModel({
@@ -527,19 +526,53 @@ exports.userCart = asyncErrorHanlder(async (req, res) => {
 });
 
 // *************************************************************************
-exports.getUserCart = asyncErrorHanlder(async (req, res) => {
+// exports.getUserCart = asyncErrorHanlder(async (req, res) => {
+//   const { _id } = req.user;
+//   validateMongoDbId(_id);
+
+//   const cart = await cartModel
+//     .findOne({ userId: _id })
+//     .populate("products.product");
+//   // products is array in cartModel
+//   // product is object name inside the product array and it contains product id
+
+//   res.status(200).json({ cart });
+// });
+
+exports.getUserCart = asyncErrorHanlder(async (req, res, next) => {
   const { _id } = req.user;
   validateMongoDbId(_id);
+  const cart = await cartModel.aggregate([
+    {
+      $match: { userId: new mongoose.Types.ObjectId(_id) },
+    },
+    {
+      $lookup: {
+        from: "products",
+        localField: "productId",
+        foreignField: "_id",
+        as: "productId",
+      },
+    },
+    {
+      $lookup: {
+        from: "colors",
+        localField: "color",
+        foreignField: "_id",
+        as: "color",
+      },
+    },
+  ]);
 
-  const cart = await cartModel
-    .findOne({ orderby: _id })
-    .populate("products.product");
-  // products is array in cartModel
-  // product is object name inside the product array and it contains product id
+  // const cart = await cartModel.findOne({ userId: _id }).populate("productId");
+
+  // if (cart.length === 0) {
+  //   const error = new CustomError("No orders found for the user ", 404);
+  //   return next(error);
+  // }
 
   res.status(200).json({ cart });
 });
-
 // *************************************************************************
 exports.emptyCart = asyncErrorHanlder(async (req, res, next) => {
   const { _id } = req.user;
@@ -642,7 +675,6 @@ exports.getOrders = asyncErrorHanlder(async (req, res, next) => {
     .populate("products.product")
     .exec();
   res.json({ userOrders });
-  console.log(userOrders);
 });
 
 exports.getOrders = asyncErrorHanlder(async (req, res, next) => {

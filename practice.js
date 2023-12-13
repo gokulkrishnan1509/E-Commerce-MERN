@@ -71,4 +71,3 @@ for (let i = 0; i < products.length; i++) {
 }
 
 // Display the combined array
-console.log(combinedArray);

@@ -32,10 +32,8 @@ async function deleteOneCateProduct(id) {
 }
 
 const updateCateProduct = async (data) => {
-  console.log(data)
   const response = await axios.patch(
     `${base_url}category/update-category/${data.id}`, {title:data.productCateProduct} ,config);
-    console.log(response)
   return response.data;
 };
 
