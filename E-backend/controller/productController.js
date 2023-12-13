@@ -44,7 +44,7 @@ exports.deleteProduct = asyncErrorHandler(async (req, res, next) => {
 
 exports.getProduct = asyncErrorHandler(async (req, res, next) => {
   const { id } = req.params;
-  const product = await ProductArray.findById(id);
+  const product = await ProductArray.findById(id).populate("color");
 
   if (!product) {
     const error = new CustomError(`product with that ID is not found`, 404);

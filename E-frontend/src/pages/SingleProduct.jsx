@@ -9,14 +9,16 @@ import { TbGitCompare } from "react-icons/tb";
 import { AiOutlineHeart } from "react-icons/ai";
 import { getSingleProductFromServer } from "../../features/products/productSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { addProductToCartServer,resetState } from "../../features/user/userSlice";
 // import ReactImageZoom from "react-image-zoom";
 
 const SingleProduct = function () {
   const location = useLocation();
   const dispatch = useDispatch();
+  const [color, setColor] = useState(null);
+  const [quantity, setQuantity] = useState(1);
   const getProductId = location.pathname.split("/")[2];
   const { singleProduct } = useSelector((state) => state.product);
-
   useEffect(() => {
     let timeOut = setTimeout(() => {
       dispatch(getSingleProductFromServer(getProductId));
@@ -26,6 +28,24 @@ const SingleProduct = function () {
       clearTimeout(timeOut);
     };
   }, [getProductId]);
+  const uploadCart = () => {
+    if (color === null) {
+      alert("please select color")
+      return false;
+    } else {
+      // (singleProduct?._id);
+      dispatch(
+        addProductToCartServer({
+          productId: singleProduct?._id,
+          quantity,
+          color,
+          price: singleProduct?.price,
+        })
+      );
+
+      // dispatch(resetState());
+    }
+  };
 
   const props = {
     width: 400,
@@ -157,7 +177,10 @@ const SingleProduct = function () {
                   </div>
                   <div className="d-flex gap-10 flex-column mt-2 mb-3">
                     <h3 className="product-heading">Color:</h3>
-                    <Color />
+                    <Color
+                      setColor={setColor}
+                      colorData={singleProduct?.color}
+                    />
                   </div>
                   <div className="d-flex gap-10 flex-row mt-2 mb-3 align-items-center  ">
                     <h3 className="product-heading ">Quantity:</h3>
@@ -170,16 +193,23 @@ const SingleProduct = function () {
                         className="form-control"
                         style={{ width: "70px" }}
                         id=""
+                        onChange={(e) => setQuantity(e.target.value)}
+                        value={quantity}
                       />
                     </div>
                     <div className="d-flex align-items-center gap-30 buynow ms-5">
                       <button
                         className="button border-0 text-white"
-                        type="submit"
+                        type="button"
                       >
                         Buy it Now
                       </button>
-                      <button className="button Addtocart text-white">
+                      <button
+                        className="button Addtocart text-white"
+                        onClick={() => {
+                          uploadCart();
+                        }}
+                      >
                         Add to Cart
                       </button>
                     </div>
@@ -191,10 +221,10 @@ const SingleProduct = function () {
                       </a>
                     </div>
                     <div>
-                      <a href="#" className="a">
+                      <Link href="#" className="a">
                         <AiOutlineHeart className="fs-5 me-2" />
                         Add to Wishlist
-                      </a>
+                      </Link>
                     </div>
                   </div>
                   <div className="d-flex gap-10 flex-column  my-3">

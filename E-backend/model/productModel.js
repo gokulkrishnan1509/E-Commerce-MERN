@@ -47,7 +47,9 @@ let productSchema = new mongoose.Schema(
       },
     ],
     tags: String,
-    color: [],
+    // color: [{ type: mongoose.Schema.Types.ObjectId, ref: "Color" }],
+    color: [{ type: mongoose.Schema.Types.ObjectId, ref: "Color" }],
+
     // color: {
     // type: String,
     //   validate: {
@@ -61,7 +63,7 @@ let productSchema = new mongoose.Schema(
       {
         star: Number,
         comment: String,
-        "postedby": { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        postedby: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
       },
     ],
     totalrating: {

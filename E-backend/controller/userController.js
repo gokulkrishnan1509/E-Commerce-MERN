@@ -464,44 +464,64 @@ exports.getWishList = asyncErrorHanlder(async (req, res) => {
   res.status(200).json({ getBlog: getBlog[0] });
 });
 // **********************************************************************
+// exports.userCart = asyncErrorHanlder(async (req, res) => {
+// const { cart } = req.body; *********************  Cart is an array
+//   const { _id } = req.user;
+
+//   validateMongoDbId(_id);
+//   try {
+//     let products = [];
+//     const user = await userModel.findById(_id);
+
+//     const alreadyExistCart = await cartModel.findOne({ orderby: user._id });
+
+//     if (alreadyExistCart) {
+//       await cartModel.deleteOne({ _id: alreadyExistCart._id });
+//     }
+
+//     for (let i = 0; i < cart.length; i++) {
+//       let object = {};
+//       object.product = cart[i]._id;
+//       object.count = cart[i].count;
+//       object.color = cart[i].color;
+//       const getPrice = await productModel
+//         .findById(cart[i]._id)
+//         .select("price")
+//         .exec();
+//       object.price = getPrice.price;
+//       products.push(object);
+//     }
+//     let cartTotal = 0;
+
+//     for (let i = 0; i < products.length; i++) {
+//       cartTotal += products[i].price * products[i].count;
+//     }
+
+//     let newCart = await new cartModel({
+//       products,
+//       cartTotal,
+//       orderby: user?._id,
+//     }).save();
+//     res.status(200).json({ newCart });
+//   } catch (error) {}
+// });
+
 exports.userCart = asyncErrorHanlder(async (req, res) => {
-  const { cart } = req.body;
+  const { productId, color, quantity, price } = req.body;
   const { _id } = req.user;
-
   validateMongoDbId(_id);
+
+  console.log(productId,color,quantity,price)
+
   try {
-    let products = [];
-    const user = await userModel.findById(_id);
-
-    const alreadyExistCart = await cartModel.findOne({ orderby: user._id });
-
-    if (alreadyExistCart) {
-      await cartModel.deleteOne({ _id: alreadyExistCart._id });
-    }
-
-    for (let i = 0; i < cart.length; i++) {
-      let object = {};
-      object.product = cart[i]._id;
-      object.count = cart[i].count;
-      object.color = cart[i].color;
-      const getPrice = await productModel
-        .findById(cart[i]._id)
-        .select("price")
-        .exec();
-      object.price = getPrice.price;
-      products.push(object);
-    }
-    let cartTotal = 0;
-
-    for (let i = 0; i < products.length; i++) {
-      cartTotal += products[i].price * products[i].count;
-    }
-
     let newCart = await new cartModel({
-      products,
-      cartTotal,
-      orderby: user?._id,
+      userId: _id,
+      productId,
+      color,
+      price,
+      quantity,
     }).save();
+
     res.status(200).json({ newCart });
   } catch (error) {}
 });
@@ -658,6 +678,19 @@ exports.getOrders = asyncErrorHanlder(async (req, res, next) => {
 });
 // ***********************************************************************
 
+// const product = await ProductArray.aggregate([
+//   {
+//     $match: { _id: new mongoose.Types.ObjectId(id) },
+//   },
+//   {
+//     $lookup: {
+//       from: "colors",
+//       localField: "color",
+//       foreignField: "_id",
+//       as: "color",
+//     },
+//   },
+// ]);
 exports.getAllOrders = asyncErrorHanlder(async (req, res) => {
   try {
     const alluserOrders = await orderModel.aggregate([
@@ -719,9 +752,10 @@ exports.getOrderByUserId = asyncErrorHanlder(async (req, res) => {
     const userOrders = await orderModel
       .findOne({ orderby: id })
       .populate("products.product")
-      .populate("orderby").exec()
+      .populate("orderby")
+      .exec();
 
-      res.json({userOrders})
+    res.json({ userOrders });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
