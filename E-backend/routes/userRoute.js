@@ -29,6 +29,7 @@ const {
   getAllOrders,
   getOrderByUserId,
   removeProductFromCart,
+  updateProductQuantityFromCart,
 } = require("../controller/userController");
 
 router.route("/post").post(createUser);
@@ -53,6 +54,9 @@ router.route("/apply-coupon").post(protect, applyCoupon);
 router.route("/user-order").post(protect, createOrder);
 router.route("/user-getorder").get(protect, getOrders);
 router.route("/delete-usercart/:id").delete(protect, removeProductFromCart);
+router
+  .route("/update-cartitem/:id/:newQuantity")
+  .patch(protect, updateProductQuantityFromCart);
 
 // this below url's will manipulate by admin's
 router

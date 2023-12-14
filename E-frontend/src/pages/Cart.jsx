@@ -9,6 +9,8 @@ import { useDispatch, useSelector } from "react-redux";
 
 function Cart() {
   const dispatch = useDispatch();
+  const { getUserCartProduct } = useSelector((state) => state.auth);
+
   useEffect(() => {
     const timeOut = setTimeout(() => {
       dispatch(getUserCartFromServer());
@@ -19,7 +21,10 @@ function Cart() {
     };
   }, []);
 
-  const { getUserCartProduct } = useSelector((state) => state.auth);
+  const updateCartProduct =(data)=>{
+    dispatch(updateUserCartQuantity({cartItemId:id,quantity}))
+
+  }
   return (
     <>
       <Meta title={"Cart"} />

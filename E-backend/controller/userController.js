@@ -606,6 +606,8 @@ exports.updateProductQuantityFromCart = asyncErrorHanlder(async (req, res) => {
     const cartItem = await cartModel.findOne({ userId: _id, _id: id });
     cartItem.quantity = newQuantity;
     await cartItem.save();
+
+    res.status(200).json({ cartItem });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
