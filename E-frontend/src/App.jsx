@@ -95,9 +95,9 @@ function App() {
             <Route
               path="my-orders"
               element={
-                // <PrivateRoutes>
+                <PrivateRoutes>
                   <Orders />
-                // </PrivateRoutes>
+              </PrivateRoutes>
               }
             />
           </Route>
