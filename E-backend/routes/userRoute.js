@@ -21,16 +21,13 @@ const {
   saveAddress,
   userCart,
   getUserCart,
-  emptyCart,
-  applyCoupon,
-  createOrder,
-  getOrders,
-  updateOrderStatus,
-  getAllOrders,
-  getOrderByUserId,
   removeProductFromCart,
   updateProductQuantityFromCart,
+  createOrder,
+  getMyOrders,
 } = require("../controller/userController");
+
+// const { checkOut, paymentVerification } = require("../controller/paymentCtrl");
 
 router.route("/post").post(createUser);
 router.route("/login").post(login);
@@ -42,6 +39,10 @@ router.route("/logout").delete(logout);
 router.route("/admin-login").post(adminLogin);
 router.route("/fetchall").get(fetchAllUser);
 
+// payment routes for user's
+// router.route("/order/checkout").post(protect, checkOut);
+// router.route("/order/paymentverfication").post(protect, paymentVerification);
+
 // this below url update by authorized user.
 router.route("/updateuser").patch(protect, getUserUpdate);
 router.route("/password-update").patch(protect, updatePassword);
@@ -49,11 +50,10 @@ router.route("/get-wishlist").get(protect, getWishList);
 router.route("/user-address").patch(protect, saveAddress);
 router.route("/user-cart").patch(protect, userCart);
 router.route("/user-getcart").get(protect, getUserCart);
-router.route("/empty-user").delete(protect, emptyCart);
-router.route("/apply-coupon").post(protect, applyCoupon);
-router.route("/user-order").post(protect, createOrder);
-router.route("/user-getorder").get(protect, getOrders);
+router.route("/cart/create-order").post(protect, createOrder);
 router.route("/delete-usercart/:id").delete(protect, removeProductFromCart);
+router.route("/getmyorders").get(protect, getMyOrders);
+
 router
   .route("/update-cartitem/:id/:newQuantity")
   .patch(protect, updateProductQuantityFromCart);
@@ -68,17 +68,5 @@ router
 router
   .route("/unblock-user/:id")
   .patch(protect, restrict("admin", "super admin"), unblockUser);
-
-router
-  .route("/update-order/:id")
-  .patch(protect, restrict("admin", "super admin"), updateOrderStatus);
-
-router
-  .route("/getall-orders")
-  .get(protect, restrict("admin", "super admin"), getAllOrders);
-
-router
-  .route("/getorderbyuser/:id")
-  .post(protect, restrict("admin", "super admin"), getOrderByUserId);
 
 module.exports = router;

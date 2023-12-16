@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllProductsfromServer } from "../../features/products/productSlice";
 const OurStore = () => {
   const [grid, setGrid] = useState(3);
-  const {Products}  =useSelector((state)=>state.product)
+  const {Products}  =useSelector((state)=>state?.product)
   const dispatch = useDispatch();
   const getProduct = () => {
   dispatch(getAllProductsfromServer());

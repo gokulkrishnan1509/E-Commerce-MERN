@@ -612,142 +612,182 @@ exports.updateProductQuantityFromCart = asyncErrorHanlder(async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
-// *************************************************************************
-exports.emptyCart = asyncErrorHanlder(async (req, res, next) => {
-  const { _id } = req.user;
-  validateMongoDbId(_id);
 
-  const user = await userModel.findOne({ _id });
-
-  const cart = await cartModel.findOneAndRemove({ orderby: user._id });
-  if (!cart) {
-    const error = new CustomError("Order not exist", 404);
-    return next(error);
-  }
-
-  res.status(200).json({ cart });
-});
-// **********************************************************************
-exports.applyCoupon = asyncErrorHanlder(async (req, res, next) => {
-  const { coupon } = req.body;
-  const { _id } = req.user;
-  validateMongoDbId(_id);
-  const validCoupon = await couponModel.findOne({ name: coupon });
-
-  if (validCoupon == null) {
-    const error = new CustomError("Invalid Coupon", 404);
-    return next(error);
-  }
-  const user = await userModel.findOne({ _id });
-
-  let { cartTotal } = await cartModel
-    .findOne({ orderby: user._id })
-    .populate("products.product");
-  let totalAfterDiscount = (
-    cartTotal -
-    (cartTotal * parseInt(validCoupon.discount)) / 100
-  ).toFixed(2);
-
-  const total = await cartModel.findOneAndUpdate(
-    { orderby: user._id },
-    { totalAfterDiscount },
-    {
-      new: true,
-    }
-  );
-  res.status(200).json({ total });
-});
-// **********************************************************************
 exports.createOrder = asyncErrorHanlder(async (req, res, next) => {
-  const { COD, couponApplied } = req.body;
+  const {
+    shippingInfo,
+    orderItems,
+    totalPrice,
+    totalPriceAfterDiscount,
+    paymentInfo,
+  } = req.body;
   const { _id } = req.user;
-  validateMongoDbId(_id);
-
   try {
-    if (!COD) {
-      const error = new CustomError("create cash order failed");
-      return next(error);
-    }
-
-    const user = await userModel.findById(_id);
-    let userCart = await cartModel.findOne({ orderby: user._id });
-    let finalAmount = 0;
-
-    if (couponApplied && userCart.totalAfterDiscount) {
-      finalAmount = userCart.totalAfterDiscount;
-    } else {
-      finalAmount = userCart.cartTotal;
-    }
-    let newOrder = await new orderModel({
-      products: userCart.products,
-      paymentIntent: {
-        id: uniqueId(),
-        amount: finalAmount,
-        method: "COD",
-        status: "Cash on Delivery",
-        created: Date.now(),
-        currency: "usd",
-      },
-      orderby: user._id,
-      orderStatus: "Cash on Delivery",
+    const order = await new orderModel({
+      shippingInfo,
+      totalPrice,
+      orderItems,
+      totalPriceAfterDiscount,
+      paymentInfo,
+      user: _id,
     }).save();
 
-    let update = userCart.products.map((item) => {
-      return {
-        updateOne: {
-          filter: { _id: item.product._id },
-          update: { $inc: { quantity: -item.count, sold: +item.count } },
-        },
-      };
-    });
-    await productModel.bulkWrite(update, {});
-    res.json({ message: "success" });
-  } catch (error) {}
-});
-// *********************************************************************
-exports.getOrders = asyncErrorHanlder(async (req, res, next) => {
-  const { _id } = req.user;
+    // let newOrder = await new orderModel({
+    //       products: userCart.products,
+    //       paymentIntent: {
+    //         id: uniqueId(),
+    //         amount: finalAmount,
+    //         method: "COD",
+    //         status: "Cash on Delivery",
+    //         created: Date.now(),
+    //         currency: "usd",
+    //       },
+    //       orderby: user._id,
+    //       orderStatus: "Cash on Delivery",
+    //     }).save();
 
-  validateMongoDbId(_id);
-  const userOrders = await orderModel
-    .findOne({ orderby: _id })
-    .populate("products.product")
-    .exec();
-  res.json({ userOrders });
-});
-
-exports.getOrders = asyncErrorHanlder(async (req, res, next) => {
-  const { _id } = req.user;
-  validateMongoDbId(_id);
-
-  const userOrders = await orderModel.aggregate([
-    {
-      $match: { orderby: new mongoose.Types.ObjectId(_id) },
-    },
-    {
-      $lookup: {
-        from: "products", // Assuming your products collection is named "products"
-        localField: "products.product",
-        foreignField: "_id",
-        as: "products",
-      },
-      $lookup: {
-        from: "users",
-        localField: "orderby",
-        foreignField: "_id",
-        as: "orderby",
-      },
-    },
-  ]);
-
-  if (userOrders.length === 0) {
-    const error = new CustomError("No orders found for the user", 404);
-    return next(error);
+    res.status(200).json({ order, success: true });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
-
-  res.status(200).json({ userOrders: userOrders[0] });
 });
-// ***********************************************************************
+
+// *************************************************************************
+// exports.emptyCart = asyncErrorHanlder(async (req, res, next) => {
+//   const { _id } = req.user;
+//   validateMongoDbId(_id);
+
+//   const user = await userModel.findOne({ _id });
+
+//   const cart = await cartModel.findOneAndRemove({ orderby: user._id });
+//   if (!cart) {
+//     const error = new CustomError("Order not exist", 404);
+//     return next(error);
+//   }
+
+//   res.status(200).json({ cart });
+// });
+// **********************************************************************
+// exports.applyCoupon = asyncErrorHanlder(async (req, res, next) => {
+//   const { coupon } = req.body;
+//   const { _id } = req.user;
+//   validateMongoDbId(_id);
+//   const validCoupon = await couponModel.findOne({ name: coupon });
+
+//   if (validCoupon == null) {
+//     const error = new CustomError("Invalid Coupon", 404);
+//     return next(error);
+//   }
+//   const user = await userModel.findOne({ _id });
+
+//   let { cartTotal } = await cartModel
+//     .findOne({ orderby: user._id })
+//     .populate("products.product");
+//   let totalAfterDiscount = (
+//     cartTotal -
+//     (cartTotal * parseInt(validCoupon.discount)) / 100
+//   ).toFixed(2);
+
+//   const total = await cartModel.findOneAndUpdate(
+//     { orderby: user._id },
+//     { totalAfterDiscount },
+//     {
+//       new: true,
+//     }
+//   );
+//   res.status(200).json({ total });
+// });
+// // **********************************************************************
+// exports.createOrder = asyncErrorHanlder(async (req, res, next) => {
+//   const { COD, couponApplied } = req.body;
+//   const { _id } = req.user;
+//   validateMongoDbId(_id);
+
+//   try {
+//     if (!COD) {
+//       const error = new CustomError("create cash order failed");
+//       return next(error);
+//     }
+
+//     const user = await userModel.findById(_id);
+//     let userCart = await cartModel.findOne({ orderby: user._id });
+//     let finalAmount = 0;
+
+//     if (couponApplied && userCart.totalAfterDiscount) {
+//       finalAmount = userCart.totalAfterDiscount;
+//     } else {
+//       finalAmount = userCart.cartTotal;
+//     }
+//     let newOrder = await new orderModel({
+//       products: userCart.products,
+//       paymentIntent: {
+//         id: uniqueId(),
+//         amount: finalAmount,
+//         method: "COD",
+//         status: "Cash on Delivery",
+//         created: Date.now(),
+//         currency: "usd",
+//       },
+//       orderby: user._id,
+//       orderStatus: "Cash on Delivery",
+//     }).save();
+
+//     let update = userCart.products.map((item) => {
+//       return {
+//         updateOne: {
+//           filter: { _id: item.product._id },
+//           update: { $inc: { quantity: -item.count, sold: +item.count } },
+//         },
+//       };
+//     });
+//     await productModel.bulkWrite(update, {});
+//     res.json({ message: "success" });
+//   } catch (error) {}
+// });
+// *********************************************************************
+// exports.getOrders = asyncErrorHanlder(async (req, res, next) => {
+//   const { _id } = req.user;
+
+//   validateMongoDbId(_id);
+//   const userOrders = await orderModel
+//     .findOne({ orderby: _id })
+//     .populate("products.product")
+//     .exec();
+//   res.json({ userOrders });
+// });
+
+// exports.getOrders = asyncErrorHanlder(async (req, res, next) => {
+//   const { _id } = req.user;
+//   validateMongoDbId(_id);
+
+//   const userOrders = await orderModel.aggregate([
+//     {
+//       $match: { orderby: new mongoose.Types.ObjectId(_id) },
+//     },
+//     {
+//       $lookup: {
+//         from: "products", // Assuming your products collection is named "products"
+//         localField: "products.product",
+//         foreignField: "_id",
+//         as: "products",
+//       },
+//       $lookup: {
+//         from: "users",
+//         localField: "orderby",
+//         foreignField: "_id",
+//         as: "orderby",
+//       },
+//     },
+//   ]);
+
+//   if (userOrders.length === 0) {
+//     const error = new CustomError("No orders found for the user", 404);
+//     return next(error);
+//   }
+
+//   res.status(200).json({ userOrders: userOrders[0] });
+// });
+// // ***********************************************************************
 
 // const product = await ProductArray.aggregate([
 //   {
@@ -762,75 +802,75 @@ exports.getOrders = asyncErrorHanlder(async (req, res, next) => {
 //     },
 //   },
 // ]);
-exports.getAllOrders = asyncErrorHanlder(async (req, res) => {
-  try {
-    const alluserOrders = await orderModel.aggregate([
-      {
-        $lookup: {
-          from: "products",
-          localField: "products.product",
-          foreignField: "_id",
-          as: "products",
-        },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "orderby",
-          foreignField: "_id",
-          as: "orderby",
-        },
-      },
-    ]);
+// exports.getAllOrders = asyncErrorHanlder(async (req, res) => {
+//   try {
+//     const alluserOrders = await orderModel.aggregate([
+//       {
+//         $lookup: {
+//           from: "products",
+//           localField: "products.product",
+//           foreignField: "_id",
+//           as: "products",
+//         },
+//       },
+//       {
+//         $lookup: {
+//           from: "users",
+//           localField: "orderby",
+//           foreignField: "_id",
+//           as: "orderby",
+//         },
+//       },
+//     ]);
 
-    res.status(200).json({ alluserOrders });
-  } catch (error) {}
-});
+//     res.status(200).json({ alluserOrders });
+//   } catch (error) {}
+// });
 
-exports.getOrderByUserId = asyncErrorHanlder(async (req, res) => {
-  const { id } = req.params;
-  validateMongoDbId(id);
-  try {
-    // const userOrders = await orderModel.aggregate([
-    //   { $match: { orderby: new mongoose.Types.ObjectId(id) } },
-    //   {
-    //     $lookup: {
-    //       from: "products",
-    //       localField: "products.product",
-    //       foreignField: "_id",
-    //       as: "product",
-    //     },
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: "users",
-    //       localField: "orderby",
-    //       foreignField: "_id",
-    //       as: "orderby",
-    //     },
-    //   },
-    // ]);
+// exports.getOrderByUserId = asyncErrorHanlder(async (req, res) => {
+//   const { id } = req.params;
+//   validateMongoDbId(id);
+//   try {
+//     // const userOrders = await orderModel.aggregate([
+//     //   { $match: { orderby: new mongoose.Types.ObjectId(id) } },
+//     //   {
+//     //     $lookup: {
+//     //       from: "products",
+//     //       localField: "products.product",
+//     //       foreignField: "_id",
+//     //       as: "product",
+//     //     },
+//     //   },
+//     //   {
+//     //     $lookup: {
+//     //       from: "users",
+//     //       localField: "orderby",
+//     //       foreignField: "_id",
+//     //       as: "orderby",
+//     //     },
+//     //   },
+//     // ]);
 
-    // if (userOrders.length === 0) {
-    //   const error = new CustomError("No orders found for the user", 404);
-    //   return next(error);
-    // }
+//     // if (userOrders.length === 0) {
+//     //   const error = new CustomError("No orders found for the user", 404);
+//     //   return next(error);
+//     // }
 
-    // const firstUserOrder = userOrders[0];
+//     // const firstUserOrder = userOrders[0];
 
-    // res.status(200).json({userOrders:firstUserOrder});
+//     // res.status(200).json({userOrders:firstUserOrder});
 
-    const userOrders = await orderModel
-      .findOne({ orderby: id })
-      .populate("products.product")
-      .populate("orderby")
-      .exec();
+//     const userOrders = await orderModel
+//       .findOne({ orderby: id })
+//       .populate("products.product")
+//       .populate("orderby")
+//       .exec();
 
-    res.json({ userOrders });
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
+//     res.json({ userOrders });
+//   } catch (error) {
+//     res.status(400).json({ message: error.message });
+//   }
+// });
 
 // exports.getAllOrders = asyncErrorHanlder(async (req, res, next) => {
 //   const alluserOrders = await orderModel
@@ -842,32 +882,67 @@ exports.getOrderByUserId = asyncErrorHanlder(async (req, res) => {
 //   console.log(userOrders);
 // });
 // ***************************************************************************
-exports.updateOrderStatus = asyncErrorHanlder(async (req, res, next) => {
-  const { status } = req.body;
-  const { id } = req.params;
-  validateMongoDbId(id);
+// exports.updateOrderStatus = asyncErrorHanlder(async (req, res, next) => {
+//   const { status } = req.body;
+//   const { id } = req.params;
+//   validateMongoDbId(id);
 
-  const updateOrderStatus = await orderModel.findByIdAndUpdate(
-    id,
-    {
-      orderStatus: status,
-      paymentIntent: { status },
-    },
-    { new: true }
-  );
-  // const orderWithProducts = await orderModel.aggregate([
-  //   {
-  //     $match: { _id: updateOrderStatus._id }
-  //   },
-  //   {
-  //     $lookup: {
-  //       from: "products",
-  //       localField: "products.product",
-  //       foreignField: "_id",
-  //       as: "product"
-  //     }
-  //   }
-  // ]);
+//   const updateOrderStatus = await orderModel.findByIdAndUpdate(
+//     id,
+//     {
+//       orderStatus: status,
+//       paymentIntent: { status },
+//     },
+//     { new: true }
+//   );
+//   // const orderWithProducts = await orderModel.aggregate([
+//   //   {
+//   //     $match: { _id: updateOrderStatus._id }
+//   //   },
+//   //   {
+//   //     $lookup: {
+//   //       from: "products",
+//   //       localField: "products.product",
+//   //       foreignField: "_id",
+//   //       as: "product"
+//   //     }
+//   //   }
+//   // ]);
 
-  res.status(200).json({ updateOrderStatus });
+//   res.status(200).json({ updateOrderStatus });
+// });
+
+exports.getMyOrders = asyncErrorHanlder(async (req, res) => {
+  const { _id } = req.user;
+  try {
+    const orders = await orderModel
+      .find({ user: _id })
+      .populate("orderItems.product")
+      .populate("orderItems.color")
+      .populate("user");
+
+    // const orders = await orderModel.aggregate([
+    //   {$match:{user:new mongoose.Types.ObjectId(_id)}},
+    //   {
+    //     $lookup:{
+    //       from:"products",
+    //       localField:"orderItems.product",
+    //       foreignField:"_id",
+    //       as:"products"
+    //     }
+    //   },
+    //   {
+    //     $lookup:{
+    //       from:"colors",
+    //       localField:"orderItems.color",
+    //       foreignField:"_id",
+    //       as:"color"
+    //     }
+    //   }
+    // ])
+
+    res.status(200).json({ orders });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
 });

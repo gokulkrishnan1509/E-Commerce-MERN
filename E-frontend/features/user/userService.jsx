@@ -31,7 +31,6 @@ const getUserWislist = async () => {
 };
 
 const addToCart = async (cartData) => {
-  console.log(cartData);
   const response = await axios.patch(
     `${base_url}user/user-cart`,
     cartData,
@@ -61,15 +60,26 @@ const removeProductCart = async function (id) {
 };
 
 const updateProductquanToCart = async function (data) {
-  const response = await axios.patch(
-    `${base_url}user/update-cartitem/${data.cartItemId}/${data.quantity}`,
-    config
-  );
+  if (data) {
+    const response = await axios.patch(
+      `${base_url}user/update-cartitem/${data.cartItemId}/${
+        data.quantity !== undefined ? data.quantity : 0
+      }`,
+      "",
+      config
+    );
+    if (response.data) {
+      return response.data;
+    }
+  }
+};
+
+const getUserOrders = async () => {
+  const response = await axios.get(`${base_url}user/getmyorders`, config);
   if (response.data) {
     return response.data;
   }
 };
-
 const authService = {
   register,
   login,
@@ -78,6 +88,7 @@ const authService = {
   getUserCart,
   removeProductCart,
   updateProductquanToCart,
+  getUserOrders,
 };
 
 export default authService;

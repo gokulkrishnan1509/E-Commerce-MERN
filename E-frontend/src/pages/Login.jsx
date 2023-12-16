@@ -1,10 +1,10 @@
 import React from "react";
 import Meta from "../components/Meta";
 import BreadCrumb from "../components/BreadCrumb";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CustomInput from "../components/CustomInput";
 import { loginToserver, resetState } from "../../features/user/userSlice";
 
@@ -15,6 +15,8 @@ const loginSchema = yup.object({
 
 const Login = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const authState = useSelector((state) => state.auth);
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -22,7 +24,10 @@ const Login = () => {
     },
     validationSchema: loginSchema,
     onSubmit: (values) => {
-      dispatch(loginToserver(values))
+      dispatch(loginToserver(values));
+
+      navigate("/");
+
       dispatch(resetState());
     },
   });
@@ -72,10 +77,16 @@ const Login = () => {
                       Forgot Password ?
                     </Link>
                     <div className=" mt-3 d-flex justify-content-center gap-15 align-items-center">
-                      <button className="button border-0 text-white" type="submit">
+                      <button
+                        className="button border-0 text-white"
+                        type="submit"
+                      >
                         Login
                       </button>
-                      <Link className=" a button signup text-white" to="/signup">
+                      <Link
+                        className=" a button signup text-white"
+                        to="/signup"
+                      >
                         SignUp
                       </Link>
                     </div>

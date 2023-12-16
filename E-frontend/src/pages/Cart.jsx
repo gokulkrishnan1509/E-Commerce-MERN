@@ -1,16 +1,21 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
 import watch from "../images/watch.jpg";
 import { AiFillDelete } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import { deletUserCartFromServer, getUserCartFromServer } from "../../features/user/userSlice";
+import {
+  deletUserCartFromServer,
+  getUserCartFromServer,
+  updateUserCartQuantity,
+} from "../../features/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 function Cart() {
   const dispatch = useDispatch();
+  const [productUpdateDetail, setProductUpdateDetail] = useState(null);
+  const [totalAmount, setTotalAmount] = useState(0);
   const { getUserCartProduct } = useSelector((state) => state.auth);
-
   useEffect(() => {
     const timeOut = setTimeout(() => {
       dispatch(getUserCartFromServer());
@@ -21,10 +26,30 @@ function Cart() {
     };
   }, []);
 
-  const updateCartProduct =(data)=>{
-    dispatch(updateUserCartQuantity({cartItemId:id,quantity}))
-
+  useEffect(() => {
+  let sum = 0;
+  for (let index = 0; index < getUserCartProduct?.length; index++) {
+    sum =
+      sum +
+      Number(getUserCartProduct[index]?.quantity) *
+        getUserCartProduct[index]?.price;
+        setTotalAmount(sum) 
   }
+  }, [getUserCartProduct]);
+
+  useEffect(() => {
+    if (productUpdateDetail !== null) {
+      dispatch(
+        updateUserCartQuantity({
+          cartItemId: productUpdateDetail?.cartItemId,
+          quantity: productUpdateDetail?.quantity,
+        })
+      );
+    }
+  }, [productUpdateDetail]);
+
+  useEffect(() => {}, []);
+
   return (
     <>
       <Meta title={"Cart"} />
@@ -84,15 +109,20 @@ function Cart() {
                             min={1}
                             max={10}
                             defaultValue={item?.quantity}
+                            onChange={(e) => {
+                              setProductUpdateDetail({
+                                cartItemId: item?._id,
+                                quantity: e.target.value,
+                              });
+                            }}
                           />
                         </div>
-                        <div  onClick={() => {
-                              dispatch(deletUserCartFromServer(item?._id));
-                            }}>
-                          <AiFillDelete
-                           
-                            className="text-danger"
-                          />
+                        <div
+                          onClick={() => {
+                            dispatch(deletUserCartFromServer(item?._id));
+                          }}
+                        >
+                          <AiFillDelete className="text-danger" />
                         </div>
                       </div>
                       <div className="cart-col-4">
@@ -110,13 +140,17 @@ function Cart() {
                 <Link to="/product" className="button a">
                   Continue To Shopping
                 </Link>
-                <div className="d-flex flex-column align-items-end">
-                  <h4>SubTotal: $1000</h4>
-                  <p>Taxes and shipping calculated at checkout</p>
-                  <Link to="/checkout" className="button a">
+                {(totalAmount !==null || totalAmount !==0) && 
+                  <div className="d-flex flex-column align-item">
+                   <h4>SubTotal: $ {totalAmount}</h4>
+                   <p>Taxes and shipping calulated at checkout </p>
+                   <Link to="/checkout" className="button a text-center">
                     Checkout
-                  </Link>
-                </div>
+                   </Link>
+                  </div>
+                
+                }
+             
               </div>
             </div>
           </div>
@@ -127,3 +161,10 @@ function Cart() {
 }
 
 export default Cart;
+   {/* <div className="d-flex flex-column align-items-end">
+                  <h4>SubTotal: ${totalAmount}</h4>
+                  <p>Taxes and shipping calculated at checkout</p>
+                  <Link to="/checkout" className="button a">
+                    Checkout
+                  </Link> */}
+                {/* </div> */}

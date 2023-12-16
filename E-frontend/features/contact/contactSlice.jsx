@@ -35,7 +35,6 @@ export const contactSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.contact = action.payload;
-        console.log(state.contact)
       })
       .addCase(createQuerytoServer.rejected, (state, action) => {
         state.isError = true;
