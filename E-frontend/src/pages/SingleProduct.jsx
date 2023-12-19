@@ -7,7 +7,11 @@ import Color from "../components/Color";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { TbGitCompare } from "react-icons/tb";
 import { AiOutlineHeart } from "react-icons/ai";
-import { getSingleProductFromServer } from "../../features/products/productSlice";
+import {
+  getAllProductsfromServer,
+  getSingleProductFromServer,
+  rateProductByUser,
+} from "../../features/products/productSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addProductToCartServer,
@@ -20,12 +24,40 @@ const SingleProduct = function () {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [color, setColor] = useState(null);
   const [alreadyAdded, setAlreadyAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [ratings, setRatings] = useState([]);
   const getProductId = location.pathname.split("/")[2];
-  const { singleProduct } = useSelector((state) => state.product);
-  const { getUserCartProduct } = useSelector((state) => state.auth);
+  const { singleProduct } = useSelector((state) => state?.product);
+  const { getUserCartProduct } = useSelector((state) => state?.auth);
+  const { Products } = useSelector((state) => state?.product);
+  useEffect(() => {
+    // Check if Products is an array before attempting to iterate
+    if (Array.isArray(Products)) {
+      let allRatings = [];
+
+      for (let i = 0; i < Products.length; i++) {
+        if (Array.isArray(Products[i].ratings)) {
+          allRatings = allRatings.concat(Products[i].ratings);
+        }
+
+        setRatings(allRatings);
+      }
+    }
+  }, [Products]);
+  
+
+  useEffect(() => {
+    let timeOut = setTimeout(() => {
+      dispatch(getAllProductsfromServer());
+    }, 300);
+
+    return () => {
+      clearTimeout(timeOut);
+    };
+  }, [dispatch]);
 
   useEffect(() => {
     for (let index = 0; index < getUserCartProduct?.length; index++) {
@@ -60,7 +92,7 @@ const SingleProduct = function () {
           price: singleProduct?.price,
         })
       );
- navigate("/cart")
+      navigate("/cart");
       // dispatch(resetState());
     }
   };
@@ -82,10 +114,41 @@ const SingleProduct = function () {
     document.execCommand("copy");
     textField.remove();
   };
+
+  const [popularProduct, setPopularProduct] = useState([]);
+  useEffect(() => {
+    let data = [];
+    for (let index = 0; index < Products?.length; index++) {
+      const element = Products[index];
+      if (element.tags === "popular") {
+        data.push(element);
+      }
+    }
+    setPopularProduct(data);
+  }, [Products]);
+  const [star, setStar] = useState(null);
+  const [comment, setComment] = useState(null);
+
+  const addRatingToProduct = () => {
+    if (star === null) {
+      return false;
+    } else if (comment === null) {
+      return false;
+    } else {
+      dispatch(
+        rateProductByUser({
+          star: star,
+          comment: comment,
+          prodId: getProductId,
+        })
+      );
+    }
+  };
+
   return (
     <>
-      <Meta title={"Product Name"} />
-      <BreadCrumb title="Product Name" />
+      <Meta title={`${singleProduct?.title}`} />
+      <BreadCrumb title={`${singleProduct?.title}`} />
       <div className="main-product-wrapper py-5 home-wrapper-2">
         <div className="container-xxl">
           <div className="row">
@@ -240,9 +303,7 @@ const SingleProduct = function () {
                       <button
                         className="button Addtocart text-white"
                         onClick={() => {
-
-                          alreadyAdded?navigate("/cart"):
-                          uploadCart();
+                          alreadyAdded ? navigate("/cart") : uploadCart();
                         }}
                       >
                         {alreadyAdded ? "Go To Cart" : "Add to Cart"}
@@ -340,54 +401,62 @@ const SingleProduct = function () {
                 </div>
                 <div className="review-form py-3">
                   <h4>Write a Review</h4>
-                  <form action="" className="d-flex flex-column gap-15">
-                    <div>
-                      <ReactStars
-                        count={5}
-                        size={24}
-                        value={4}
-                        edit={true}
-                        activeColor="#ffd700"
-                      />
-                    </div>
-                    <div>
-                      <textarea
-                        name=""
-                        id=""
-                        cols="30"
-                        rows="4"
-                        placeholder="Comments"
-                        // className="form-control"
-                      ></textarea>
-                    </div>
-                    <div className="d-flex justify-content-end">
-                      <button className="button border-0 text-white">
-                        Submit Review
-                      </button>
-                    </div>
-                  </form>
+                  <div>
+                    <ReactStars
+                      count={5}
+                      size={24}
+                      value={4}
+                      edit={true}
+                      activeColor="#ffd700"
+                      onChange={(e) => {
+                        setStar(e);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <textarea
+                      name=""
+                      id=""
+                      cols="30"
+                      rows="4"
+                      placeholder="Comments"
+                      // className="form-control"
+                      onChange={(e) => {
+                        setComment(e.target.value);
+                      }}
+                    ></textarea>
+                  </div>
+                  <div className="d-flex justify-content-end">
+                    <button
+                      className="button border-0 text-white"
+                      onClick={addRatingToProduct}
+                      type="button"
+                    >
+                      Submit Review
+                    </button>
+                  </div>
                 </div>
                 <div className="reviews mt-4">
-                  <div className="reviews-content">
-                    <div className="d-flex gap-10 align-items-center">
-                      <h6 className="mb-0 pb-0">Gokul</h6>
-                      <ReactStars
-                        count={5}
-                        size={24}
-                        value={4}
-                        edit={false}
-                        activeColor="#ffd700"
-                      />
-                    </div>
-
-                    <p className="mt-3">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Soluta eveniet iure optio perferendis odit earum
-                      voluptate, nemo provident aut autem possimus. Ipsa
-                      consequatur impedit dolorem placeat molestiae reiciendis
-                      illo quod?
-                    </p>
+                {ratings && ratings?.map((item,index)=>{
+                return(
+                  <div key={index} className="review">
+                  <div className="d-flex gap-10 align-items-center">
+                  
+                  <ReactStars 
+                  
+                  count={5}
+                  size={24}
+                  value={item?.star}
+                  edit={false}
+                  activeColor="#ffd700"
+                  />
+                  
                   </div>
+                  
+                  <p className="mt-3">{item?.comment}</p>
+                  </div>
+                )
+                })}
                 </div>
               </div>
             </div>
@@ -401,8 +470,7 @@ const SingleProduct = function () {
               <div className="section-heading">Our Popular Products</div>
             </div>
             <div className="row">
-              <ProductCard />
-              <ProductCard />
+              <ProductCard data={popularProduct} />
             </div>
           </div>
         </div>

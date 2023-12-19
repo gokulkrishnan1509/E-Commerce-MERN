@@ -3,10 +3,7 @@ import { base_url } from "../../src/utils/base_url";
 import { config } from "../../src/utils/axiosConfig";
 
 const register = async (userData) => {
-  const response = await axios.post(
-    `http://localhost:1509/user/post`,
-    userData
-  );
+  const response = await axios.post(`${base_url}user/post`, userData);
   if (response.data) {
     if (response.data) {
       localStorage.setItem("customer", JSON.stringify(response.data));
@@ -80,6 +77,26 @@ const getUserOrders = async () => {
     return response.data;
   }
 };
+
+const updateUserDetailsByToken = async (data) => {
+  const response = await axios.patch(
+    `${base_url}user/updateuser`,
+    data,
+    config
+  );
+
+  if (response.data) {
+    return response.data;
+  }
+};
+
+const forgotPasswordToken = async(data)=>{
+const response = await axios.post(`${base_url}user/forgot`,data)
+if(response.data){
+  return response.data
+}
+}
+
 const authService = {
   register,
   login,
@@ -89,6 +106,8 @@ const authService = {
   removeProductCart,
   updateProductquanToCart,
   getUserOrders,
+  updateUserDetailsByToken,
+  forgotPasswordToken
 };
 
 export default authService;

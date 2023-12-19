@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
 import cart from "../images/cart.svg";
 import wishList from "../images/wishlist.svg";
@@ -7,13 +7,25 @@ import user from "../images/user.svg";
 import compare from "../images/compare.svg";
 import menu from "../images/menu.svg";
 import { useDispatch, useSelector } from "react-redux";
-// svg image
+import { Typeahead } from "react-bootstrap-typeahead";
+import "react-bootstrap-typeahead/css/Typeahead.css";
+import { getSingleProductFromServer } from "../../features/products/productSlice";
 
 function Header() {
   const dispatch = useDispatch();
   const { getUserCartProduct } = useSelector((state) => state?.auth);
   const authState = useSelector((state) => state?.auth);
+  const { Products } = useSelector((state) => state?.product);
+  // console.log(Products)
+
+  const [productOpt, setProductOpt] = useState([]);
+  const navigate = useNavigate();
   const [total, setTotal] = useState(null);
+  // *********below codes based for search functionality*************
+  const [paginate, setPaginate] = useState(true);
+
+  // ****************************************************************
+
   useEffect(() => {
     let sum = 0;
     for (let index = 0; index < getUserCartProduct?.length; index++) {
@@ -26,6 +38,21 @@ function Header() {
       setTotal(sum);
     }
   }, [getUserCartProduct]);
+
+  useEffect(() => {
+    let data = [];
+    for (let index = 0; index < Products?.length; index++) {
+      const element = Products[index];
+      data.push({ id: index, prod: element?._id, name: element?.title });
+    }
+    setProductOpt(data);
+  }, [Products]);
+
+  const handleLogout = function () {
+    localStorage.clear();
+    window.location.reload();
+  };
+
   return (
     <>
       <header className="header-top-strip py-3">
@@ -58,12 +85,25 @@ function Header() {
             </div>
             <div className="col-5">
               <div className="input-group ">
-                <input
+                {/* <input
                   type="text"
                   className="form-control py-2"
                   placeholder="Search Product Here..."
                   aria-label="Search Product Here..."
                   aria-describedby="basic-addon2"
+                /> */}
+                <Typeahead
+                  id="pagination-example"
+                  onPaginate={() => console.log("Results paginated")}
+                  options={productOpt}
+                  onChange={(selected) => {
+                    navigate(`/product/${selected[0]?.prod}`);
+                    dispatch(getSingleProductFromServer(selected[0]?.prod));
+                  }}
+                  paginate={paginate}
+                  labelKey={"name"}
+                  minLength={2}
+                  placeholder="Search for Products here..."
                 />
                 <span className="input-group-text p-2" id="basic-addon2">
                   <BsSearch className="fs-4" />
@@ -73,7 +113,7 @@ function Header() {
             <div className="col-5">
               <div className="header-upper-links d-flex align-items-center justify-content-between">
                 <div>
-                  <Link
+                  {/* <Link
                     to="/compare-product"
                     className="a d-flex align-items-center gap-10 text-white"
                   >
@@ -82,7 +122,7 @@ function Header() {
                       Compare <br />
                       Products
                     </p>
-                  </Link>
+                  </Link> */}
                 </div>
                 <div>
                   <Link
@@ -99,7 +139,7 @@ function Header() {
                 </div>
                 <div>
                   <Link
-                    to={authState?.user === null ? "/login" : ""}
+                    to={authState?.user === null ? "/login" : "/my-profile"}
                     className="a d-flex align-items-center gap-10 text-white"
                   >
                     <img src={user} alt="user" />
@@ -109,7 +149,6 @@ function Header() {
                       </p>
                     ) : (
                       <p className="mb-0">
-                        {" "}
                         {authState?.user?.data?.user?.name}
                       </p>
                     )}
@@ -186,13 +225,22 @@ function Header() {
                     <NavLink to="/product" className="a">
                       Our Store
                     </NavLink>
-                    <NavLink to="/my-orders" className="a">My Orders</NavLink>
+                    <NavLink to="/my-orders" className="a">
+                      My Orders
+                    </NavLink>
                     <NavLink to="/blogs" className="a">
                       Blogs
                     </NavLink>
                     <NavLink to="/contact" className="a">
                       Contact
                     </NavLink>
+                    <button
+                      onClick={handleLogout}
+                      className="border border-0 bg-transparent text-white  text-uppercase"
+                      type="button"
+                    >
+                      Logout
+                    </button>
                   </div>
                 </div>
               </div>

@@ -152,7 +152,7 @@ function Home() {
           </div>
         </div>
       </Container>
-
+{/* 
       <section className="home-wrapper-2 py-5">
         <div className="container-xxl">
           <div className="row">
@@ -219,7 +219,7 @@ function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       <section className="featured-wrapper py-5 home-wrapper-2">
         <div className="container-xxl">
@@ -279,16 +279,16 @@ function Home() {
                           </div>
                           <div className="action-bar position-absolute">
                             <div className="d-flex flex-column gap-15">
-                              <Link>
+                              {/* <Link>
                                 <img src={addCart} alt="products" />
-                              </Link>
+                              </Link> */}
                               <Link  to={`/product/${item?._id}`}>
                                 <img src={view} alt="products" />
                               </Link>
 
-                              <Link>
+                              {/* <Link>
                                 <img src={addCart} alt="products" />
-                              </Link>
+                              </Link> */}
                             </div>
                           </div>
                         </div>
@@ -408,7 +408,7 @@ function Home() {
             <div className="row">
               {Array.isArray(Products) &&
                 Products?.map((item, index) => {
-                  if (item.tags === "popluar") {
+                  if (item.tags === "popular") {
                     return (
                       <div key={index} className={"col-3"}>
                         <div className="product-card position-relative ">
@@ -458,10 +458,10 @@ function Home() {
                           </div>
                           <div className="action-bar position-absolute">
                             <div className="d-flex flex-column gap-15">
-                              <Link>
+                              {/* <Link>
                                 <img src={addCart} alt="products" />
-                              </Link>
-                              <Link>
+                              </Link> */}
+                              <Link to={`/product/${item?._id}`}>
                                 <img src={view} alt="products" />
                               </Link>
 

@@ -2,9 +2,9 @@ import React from "react";
 import ReactStars from "react-rating-stars-component";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Wish from "../images/wish.svg";
-import Prodcompare from "../images/prodcompare.svg";
-import WishList from "../images/wishlist.svg";
-import Watch from "../images/watch.jpg";
+// import Prodcompare from "../images/prodcompare.svg";
+// import WishList from "../images/wishlist.svg";
+// import Watch from "../images/watch.jpg";
 import Watch2 from "../images/speaker.jpg";
 import addCart from "../images/add-cart.svg";
 import view from "../images/view.svg";
@@ -79,16 +79,12 @@ const ProductCard = (props) => {
               </div>
               <div className="action-bar position-absolute">
                 <div className="d-flex flex-column gap-15">
-                  <Link >
-                    <img src={addCart} alt="products" />
-                  </Link >
+                 
                   <Link to={`/product/${item?._id}`} >
                     <img src={view} alt="products" />
                   </Link>
 
-                  <Link>
-                    <img src={addCart} alt="products" />
-                  </Link>
+                 
                 </div>
               </div>
             </div>

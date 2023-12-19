@@ -48,7 +48,6 @@ function Cart() {
     }
   }, [productUpdateDetail]);
 
-  useEffect(() => {}, []);
 
   return (
     <>

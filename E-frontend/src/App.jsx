@@ -21,8 +21,9 @@ import ShippingPolicy from "./pages/ShippingPolicy";
 import SingleProduct from "./pages/SingleProduct";
 import Cart from "./pages/Cart";
 import Orders from "./pages/Orders";
-
+import Profile from "./pages/profile";
 import Checkout from "./pages/Checkout";
+
 import { PrivateRoutes } from "../routing/PrivateRoutes";
 import { OpentRoutes } from "../routing/OpenRoutes";
 function App() {
@@ -39,7 +40,7 @@ function App() {
             <Route path="product/:id" element={<SingleProduct />} />
             <Route path="compare-product" element={<CompareProduct />} />
             <Route path="forgot-password" element={<ForgotPassword />} />
-            <Route path="reset-password" element={<ResetPassword />} />
+            <Route path="reset-password/:token" element={<ResetPassword />} />
             <Route path="blog/:id" element={<SingleBlog />} />
             <Route path="privacy-policy" element={<PrivaPolicy />} />
             <Route path="term-conditions" element={<TermAndCondition />} />
@@ -97,7 +98,16 @@ function App() {
               element={
                 <PrivateRoutes>
                   <Orders />
-              </PrivateRoutes>
+                </PrivateRoutes>
+              }
+            />
+
+            <Route
+              path="my-profile"
+              element={
+                <PrivateRoutes>
+                  <Profile />
+                </PrivateRoutes>
               }
             />
           </Route>

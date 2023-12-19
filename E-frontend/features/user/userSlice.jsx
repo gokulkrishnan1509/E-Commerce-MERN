@@ -107,6 +107,30 @@ export const getUserOrdersFromServer = createAsyncThunk(
   }
 );
 
+export const updateUserDetailsatServer = createAsyncThunk(
+  "user/user-crediantials",
+  async (data, thunkAPI) => {
+    try {
+      const response = await authService.updateUserDetailsByToken(data);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const getForgotPasswordToken = createAsyncThunk(
+  "user/user-forgotpassword",
+  async (data, thunkAPI) => {
+    try {
+      const response = await authService.forgotPasswordToken(data);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 const getCustomerfromLocalStorage = localStorage.getItem("customer")
   ? JSON.parse(localStorage.getItem("customer"))
   : null;
@@ -251,6 +275,36 @@ export const authSlice = createSlice({
         state.userOrders = action.payload?.orders;
       })
       .addCase(getUserOrdersFromServer.rejected, (state, action) => {
+        state.isError = true;
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.message = action.error;
+      })
+      .addCase(updateUserDetailsatServer.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateUserDetailsatServer.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isSuccess = true;
+        state.isLoading = false;
+        state.updatedUserDetails = action?.payload;
+      })
+      .addCase(updateUserDetailsatServer.rejected, (state, action) => {
+        state.isError = true;
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.message = action.error;
+      })
+      .addCase(getForgotPasswordToken.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getForgotPasswordToken.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isSuccess = true;
+        state.isLoading = false;
+        state.token = action.payload;
+      })
+      .addCase(getForgotPasswordToken.rejected, (state, action) => {
         state.isError = true;
         state.isSuccess = false;
         state.isLoading = false;

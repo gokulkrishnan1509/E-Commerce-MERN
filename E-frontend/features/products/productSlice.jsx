@@ -5,9 +5,9 @@ export const resetState = createAction("Reset_all");
 
 export const getAllProductsfromServer = createAsyncThunk(
   "product/get-all",
-  async (thunkAPI) => {
+  async (data,thunkAPI) => {
     try {
-      const response = await productService.getProducts();
+      const response = await productService.getProducts(data);
       return response.getallProudcts;
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
@@ -30,11 +30,25 @@ export const addProductToWishlist = createAsyncThunk(
 export const getSingleProductFromServer = createAsyncThunk(
   "product/getOneproduct",
   async (id, thunkAPI) => {
-
-    
     try {
       const response = await productService.getSingleProduct(id);
       return response.product;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const rateProductByUser = createAsyncThunk(
+  "product/ratings",
+  async (data, thunkAPI) => {
+    try {
+      const response = await productService.rateProduct(data);
+      if (response) {
+        thunkAPI.dispatch(getAllProductsfromServer())
+        return response;
+
+      }
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -95,13 +109,27 @@ export const productSlice = createSlice({
         state.isError = false;
         state.isSuccess = true;
         state.singleProduct = action.payload;
-
       })
       .addCase(getSingleProductFromServer.rejected, (state, action) => {
         state.isError = true;
         state.isLoading = false;
         state.isSuccess = false;
         state.message = action.error;
+      })
+      .addCase(rateProductByUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(rateProductByUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.rating = action.payload;
+      })
+      .addCase(rateProductByUser.rejected, (state, action) => {
+        state.isSuccess = false;
+        state.isError = true;
+        state.message = action.error;
+        state.isLoading = false;
       })
       .addCase(resetState, () => productState);
   },

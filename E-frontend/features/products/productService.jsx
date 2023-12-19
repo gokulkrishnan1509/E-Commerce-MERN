@@ -3,8 +3,12 @@ import axios from "axios";
 import { base_url } from "../../src/utils/base_url";
 import { config } from "../../src/utils/axiosConfig";
 
-const getProducts = async () => {
-  const response = await axios.get(`${base_url}product/all-product`);
+const getProducts = async (data) => {
+  const response = await axios.get(
+    `${base_url}product/all-product?${
+      data?.brand ? `brand=${data?.brand}&&` : ""
+    } ${data?.tag ? `brand=${data?.tag}&&` : ""}`
+  );
   return response.data;
 };
 
@@ -26,10 +30,18 @@ const getSingleProduct = async (id) => {
   }
 };
 
+const rateProduct = async (data) => {
+  console.log(data);
+  const response = await axios.patch(`${base_url}product/rating`, data, config);
+  if (response.data) {
+    return response.data;
+  }
+};
 const productService = {
   getProducts,
   addToWishlist,
   getSingleProduct,
+  rateProduct,
 };
 
 export default productService;

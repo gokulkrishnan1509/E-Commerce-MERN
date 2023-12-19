@@ -11,6 +11,7 @@ const CustomInput = (props) => {
     value,
     onChange,
     onBlur,
+    // disabled
   } = props;
   return (
     <>
@@ -23,6 +24,7 @@ const CustomInput = (props) => {
         value={value}
         onChange={onChange}
         onBlur={onBlur}
+        // disabled={disabled}
       />
       <label htmlFor={id}>{label}</label>
     </>

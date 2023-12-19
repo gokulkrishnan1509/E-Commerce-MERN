@@ -36,7 +36,6 @@ const ResetPassword = function () {
                       className="button border-0 text-white"
                       type="submit"
                     >
-                      {" "}
                       Press
                     </button>
                   </div>
