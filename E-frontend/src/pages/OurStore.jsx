@@ -20,7 +20,6 @@ const OurStore = () => {
   const [minPrice, setMinPrice] = useState(null);
   const [maxPrice, setMaxPrice] = useState(null);
   const [sort, setSort] = useState(null);
-  console.log(sort);
 
   useEffect(() => {
     let newBrands = [];
@@ -33,6 +32,7 @@ const OurStore = () => {
       newBrands.push(element.brand);
       category.push(element.category);
       newTags.push(element.tags);
+      newColors.push(element.color);
     }
     setBrands(newBrands);
     setCategories(category);
@@ -52,6 +52,7 @@ const OurStore = () => {
       })
     );
   };
+
   useEffect(() => {
     let timeOut = setTimeout(() => {
       getProduct();
@@ -60,7 +61,7 @@ const OurStore = () => {
     return () => {
       clearTimeout(timeOut);
     };
-  }, []);
+  }, [sort, tag, brand, category, minPrice, maxPrice]);
 
   return (
     <>

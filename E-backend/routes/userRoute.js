@@ -25,6 +25,8 @@ const {
   updateProductQuantityFromCart,
   createOrder,
   getMyOrders,
+  getMonthWiseOrderIncome,
+  getMonthWiseOrderCount,
 } = require("../controller/userController");
 
 // const { checkOut, paymentVerification } = require("../controller/paymentCtrl");
@@ -53,6 +55,10 @@ router.route("/user-getcart").get(protect, getUserCart);
 router.route("/cart/create-order").post(protect, createOrder);
 router.route("/delete-usercart/:id").delete(protect, removeProductFromCart);
 router.route("/getmyorders").get(protect, getMyOrders);
+router.route("/getMonthWiseOrderCount").get(protect, getMonthWiseOrderCount);
+router
+  .route("/getMonthWiseByOrderIncome")
+  .get(protect, getMonthWiseOrderIncome);
 
 router
   .route("/update-cartitem/:id/:newQuantity")
