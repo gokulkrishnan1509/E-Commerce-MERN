@@ -37,16 +37,50 @@ export const getOrders = createAsyncThunk(
   }
 );
 
-export const getUserOrderFromServer =createAsyncThunk(
-  "order/getone-orders",async(id,thunkApi)=>{
-    try{
-      const response = await authService.getUserOrder(id)
-        return response.userOrders
-    }catch(error){
-      return thunkApi.rejectWithValue(error)
+export const getUserOrderFromServer = createAsyncThunk(
+  "order/getone-orders",
+  async (id, thunkApi) => {
+    try {
+      const response = await authService.getUserOrder(id);
+      return response.userOrders;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
     }
   }
-)
+);
+
+export const getMonthlyOrderFromServer = createAsyncThunk(
+  "auth/monthly-data",
+  async (thunkApi) => {
+    try {
+      const response = await authService.getMonthlyOrder();
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const getYearlyTotalFromServer = createAsyncThunk(
+  "auth/yearly-data",
+  async (thunkApi) => {
+    try {
+      const response = await authService.getYearlyStates()
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const getAllUserOrderFromServer = createAsyncThunk("auth/all-user-order",async(thunkApi)=>{
+  try{
+    const response = await authService.getAllOrder();
+    return response.orders;
+  }catch(error){
+    return thunkApi.rejectWithValue(error)
+  }
+})
 
 export const authSlice = createSlice({
   name: "auth",
@@ -84,15 +118,59 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.isLoading = false;
         state.message = action.error;
-      }).addCase(getUserOrderFromServer.pending,(state)=>{
+      })
+      .addCase(getUserOrderFromServer.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getUserOrderFromServer.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.userOrder = action.payload;
+      })
+      .addCase(getUserOrderFromServer.rejected, (state, action) => {
+        state.isError = true;
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.message = action.error;
+      })
+      .addCase(getMonthlyOrderFromServer.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getMonthlyOrderFromServer.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.getMonthlyData = action.payload;
+      })
+      .addCase(getMonthlyOrderFromServer.rejected, (state, action) => {
+        state.isError = true;
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.message = action.error;
+      })
+      .addCase(getYearlyTotalFromServer.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getYearlyTotalFromServer.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isSuccess = true;
+        state.isLoading = false;
+        state.getYearlyData = action.payload;
+      })
+      .addCase(getYearlyTotalFromServer.rejected, (state, action) => {
+        state.isError = true;
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.message = action.error;
+      }).addCase(getAllUserOrderFromServer.pending,(state)=>{
         state.isLoading=true;
-        
-      }).addCase(getUserOrderFromServer.fulfilled,(state,action)=>{
-        state.isLoading=false;
-        state.isSuccess=true;
+      }).addCase(getAllUserOrderFromServer.fulfilled,(state,action)=>{
         state.isError=false;
-        state.userOrder =action.payload
-      }).addCase(getUserOrderFromServer.rejected,(state,action)=>{
+        state.isSuccess=true;
+        state.isLoading=false;
+        state.userOrders =action.payload
+      }).addCase(getAllUserOrderFromServer.rejected,(state,action)=>{
         state.isError=true;
         state.isSuccess=false;
         state.isLoading=false;

@@ -948,6 +948,35 @@ exports.getMyOrders = asyncErrorHanlder(async (req, res) => {
   }
 });
 
+exports.getAllOrders = asyncErrorHanlder(async (req, res) => {
+  try {
+    const orders = await orderModel.find().populate("user")
+
+
+    res.status(200).json({ orders });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+});
+
+// exports.getAllOrder = asyncErrorHanlder(async(req,res)=>{
+//   try{
+//     const orders = await orderModel.aggregate([
+//       {
+//         $lookup:{
+//           from:"users",
+//           localField:"user",
+//           foreignField:"_id",
+//           as:"user"
+//         }
+//       }
+//     ])
+//     res.status(200).json({orders})
+//   } catch(error){
+//     res.status(404).json({message:error.message})
+//   }
+// })
+
 exports.getMonthWiseOrderIncome = asyncErrorHanlder(async (req, res) => {
   let monthNames = [
     "January",
@@ -989,13 +1018,14 @@ exports.getMonthWiseOrderIncome = asyncErrorHanlder(async (req, res) => {
           month: "$month",
         },
         amount: { $sum: "$totalPriceAfterDiscount" },
+        count: { $sum: 1 },
       },
     },
   ]);
   res.status(200).json({ data });
 });
 
-exports.getMonthWiseOrderCount = asyncErrorHanlder(async (req, res) => {
+exports.getYearlyTotalOrders = asyncErrorHanlder(async (req, res) => {
   let monthNames = [
     "January",
     "February",
@@ -1017,7 +1047,6 @@ exports.getMonthWiseOrderCount = asyncErrorHanlder(async (req, res) => {
 
   for (let index = 0; index < 12; index++) {
     date.setMonth(date.getMonth() - 1);
-
     endDate = monthNames[date.getMonth()] + " " + date.getFullYear();
   }
 
@@ -1032,12 +1061,12 @@ exports.getMonthWiseOrderCount = asyncErrorHanlder(async (req, res) => {
     },
     {
       $group: {
-        _id: {
-          month: "$month",
-        },
+        _id: null,
         count: { $sum: 1 },
+        amount: { $sum: "$totalPriceAfterDiscount" },
       },
     },
   ]);
+
   res.status(200).json({ data });
 });

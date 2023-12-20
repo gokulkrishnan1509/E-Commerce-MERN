@@ -26,7 +26,8 @@ const {
   createOrder,
   getMyOrders,
   getMonthWiseOrderIncome,
-  getMonthWiseOrderCount,
+  getYearlyTotalOrders,
+  getAllOrders,
 } = require("../controller/userController");
 
 // const { checkOut, paymentVerification } = require("../controller/paymentCtrl");
@@ -55,11 +56,10 @@ router.route("/user-getcart").get(protect, getUserCart);
 router.route("/cart/create-order").post(protect, createOrder);
 router.route("/delete-usercart/:id").delete(protect, removeProductFromCart);
 router.route("/getmyorders").get(protect, getMyOrders);
-router.route("/getMonthWiseOrderCount").get(protect, getMonthWiseOrderCount);
+router.route("/getYearlyTotalOrders").get(protect, getYearlyTotalOrders);
 router
   .route("/getMonthWiseByOrderIncome")
   .get(protect, getMonthWiseOrderIncome);
-
 router
   .route("/update-cartitem/:id/:newQuantity")
   .patch(protect, updateProductQuantityFromCart);
@@ -74,5 +74,8 @@ router
 router
   .route("/unblock-user/:id")
   .patch(protect, restrict("admin", "super admin"), unblockUser);
+
+router.route("/getallorders").get(protect,restrict("admin", "super admin"), getAllOrders
+);
 
 module.exports = router;
