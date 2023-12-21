@@ -52,7 +52,6 @@ const DashBoard = function () {
   const [orderData,setOrderData] =useState([])
 
   const { getMonthlyData,getYearlyData,userOrders } = useSelector((state) => state?.auth);
-console.log(userOrders)
   useEffect(() => {
     let timeOut = setTimeout(() => {
       dispatch(getMonthlyOrderFromServer());

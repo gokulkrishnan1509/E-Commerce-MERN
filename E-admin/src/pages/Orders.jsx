@@ -10,7 +10,10 @@ import { Link } from "react-router-dom";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 
-import { getOrders } from "../features/auth/authSlice";
+import {
+  getAllUserOrderFromServer,
+  updateUserOrderOnServer,
+} from "../features/auth/authSlice";
 
 const columns = [
   { title: "SNo", dataIndex: "Key" },
@@ -23,11 +26,11 @@ const columns = [
 
 function Orders() {
   const dispatch = useDispatch();
-  const { orders } = useSelector((state) => state.auth);
+  const { userOrders } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const timeOut = setTimeout(() => {
-      dispatch(getOrders());
+      dispatch(getAllUserOrderFromServer());
     }, 500);
 
     return () => {
@@ -36,11 +39,11 @@ function Orders() {
   }, [dispatch]);
   const data1 = [];
 
-  for (let i = 0; i < orders.length; i++) {
+  for (let i = 0; i < userOrders?.length; i++) {
     // console.log(orders[i].)
     data1.push({
       Key: i + 1,
-      name: orders[i].user[0].name,
+      name: userOrders[i]?.user?.name,
       // product: orders[i].products.map((i, j) => {
       //   return (
       //     // <>
@@ -50,24 +53,68 @@ function Orders() {
       //     // </>s
       //   );
       // }),
-      
+
       product: (
-        <Link to={`/admin/orders/${orders[i].orderby[0]._id}`}  style={{textDecoration:"none",fontFamily:"Roboto,sans-serif"}}>View User Orders </Link>
+        <Link
+          to={`/admin/orders/${userOrders[i]?._id}`}
+          style={{ textDecoration: "none", fontFamily: "Roboto,sans-serif" }}
+        >
+          View User Orders{" "}
+        </Link>
       ),
-      amount: orders[i].paymentIntent.amount,
-      date: new Date(orders[i].createdAt).toLocaleDateString(),
+      amount: userOrders[i]?.totalPrice,
+      date: new Date(userOrders[i]?.createdAt).toLocaleDateString(),
       action: (
         <>
-          <Link to="/" className="fs-3 text-danger">
-            <BiEdit />
-          </Link>
-          <Link to="/" className="ms-3 fs-3 text-danger">
-            <AiFillDelete />
-          </Link>
+          <select
+            name=""
+            defaultValue={userOrders[i]?.orderStatus}
+            onChange={(e) => {
+              updateOrderStatus(userOrders[i]?._id, e.target.value);
+            }}
+            className="form-control form-select"
+            id=""
+          >
+            <option
+              value="Ordered"
+              disabled
+              defaultValue={userOrders[i]?.orderStatus === "Ordered"}
+            >
+              Ordered
+            </option>
+            <option
+              value="Processed"
+              defaultValue={userOrders[i]?.orderStatus === "Processed"}
+            >
+              Processed
+            </option>
+            <option
+              value="Shipped"
+              defaultValue={userOrders[i]?.orderStatus === "Shipped"}
+            >
+              Shipped
+            </option>
+            <option
+              value="Out For Delivery"
+              defaultValue={userOrders[i]?.orderStatus === "Out For Delivery"}
+            >
+              Out For Delivery
+            </option>
+            <option
+              value="Delivered"
+              defaultValue={userOrders[i]?.orderStatus === "Delivered"}
+            >
+              Delivered
+            </option>
+          </select>
         </>
       ),
     });
   }
+
+  const updateOrderStatus = (id, data) => {
+    dispatch(updateUserOrderOnServer({ id: id, status: data }));
+  };
 
   return (
     <>

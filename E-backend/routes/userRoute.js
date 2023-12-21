@@ -28,6 +28,8 @@ const {
   getMonthWiseOrderIncome,
   getYearlyTotalOrders,
   getAllOrders,
+  getSingleOrders,
+  updateOrders,
 } = require("../controller/userController");
 
 // const { checkOut, paymentVerification } = require("../controller/paymentCtrl");
@@ -75,7 +77,16 @@ router
   .route("/unblock-user/:id")
   .patch(protect, restrict("admin", "super admin"), unblockUser);
 
-router.route("/getallorders").get(protect,restrict("admin", "super admin"), getAllOrders
-);
+router
+  .route("/getallorders")
+  .get(protect, restrict("admin", "super admin"), getAllOrders);
+
+router
+  .route("/getorderbyuser/:id")
+  .get(protect, restrict("admin", "super admin"), getSingleOrders);
+
+router
+  .route("/updateOrder/:id")
+  .patch(protect, restrict("admin", "super admin"), updateOrders);
 
 module.exports = router;

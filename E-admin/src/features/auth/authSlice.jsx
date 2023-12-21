@@ -25,24 +25,12 @@ export const login = createAsyncThunk(
   }
 );
 
-export const getOrders = createAsyncThunk(
-  "orders/get-orders",
-  async (thunkApi) => {
-    try {
-      const response = await authService.getOrder();
-      return response["alluserOrders"];
-    } catch (error) {
-      return thunkApi.rejectWithValue(error);
-    }
-  }
-);
-
 export const getUserOrderFromServer = createAsyncThunk(
   "order/getone-orders",
   async (id, thunkApi) => {
     try {
       const response = await authService.getUserOrder(id);
-      return response.userOrders;
+      return response.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error);
     }
@@ -65,7 +53,7 @@ export const getYearlyTotalFromServer = createAsyncThunk(
   "auth/yearly-data",
   async (thunkApi) => {
     try {
-      const response = await authService.getYearlyStates()
+      const response = await authService.getYearlyStates();
       return response.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error);
@@ -73,14 +61,29 @@ export const getYearlyTotalFromServer = createAsyncThunk(
   }
 );
 
-export const getAllUserOrderFromServer = createAsyncThunk("auth/all-user-order",async(thunkApi)=>{
-  try{
-    const response = await authService.getAllOrder();
-    return response.orders;
-  }catch(error){
-    return thunkApi.rejectWithValue(error)
+export const getAllUserOrderFromServer = createAsyncThunk(
+  "auth/all-user-order",
+  async (thunkApi) => {
+    try {
+      const response = await authService.getAllOrder();
+      return response.orders;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
   }
-})
+);
+
+export const updateUserOrderOnServer = createAsyncThunk(
+  "auth/auth-update",
+  async (data, thunkApi) => {
+    try {
+      const response = await authService.updateUserOrder(data);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
 
 export const authSlice = createSlice({
   name: "auth",
@@ -104,21 +107,7 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.message = action.error;
       })
-      .addCase(getOrders.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(getOrders.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
-        state.isError = false;
-        state.orders = action.payload;
-      })
-      .addCase(getOrders.rejected, (state, action) => {
-        state.isError = true;
-        state.isSuccess = false;
-        state.isLoading = false;
-        state.message = action.error;
-      })
+
       .addCase(getUserOrderFromServer.pending, (state) => {
         state.isLoading = true;
       })
@@ -163,19 +152,36 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.isLoading = false;
         state.message = action.error;
-      }).addCase(getAllUserOrderFromServer.pending,(state)=>{
-        state.isLoading=true;
-      }).addCase(getAllUserOrderFromServer.fulfilled,(state,action)=>{
-        state.isError=false;
-        state.isSuccess=true;
-        state.isLoading=false;
-        state.userOrders =action.payload
-      }).addCase(getAllUserOrderFromServer.rejected,(state,action)=>{
-        state.isError=true;
-        state.isSuccess=false;
-        state.isLoading=false;
-        state.message=action.error
       })
+      .addCase(getAllUserOrderFromServer.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAllUserOrderFromServer.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isSuccess = true;
+        state.isLoading = false;
+        state.userOrders = action.payload;
+      })
+      .addCase(getAllUserOrderFromServer.rejected, (state, action) => {
+        state.isError = true;
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.message = action.error;
+      })
+      .addCase(updateUserOrderOnServer.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateUserOrderOnServer.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isSuccess = true;
+        state.isLoading = false;
+      })
+      .addCase(updateUserOrderOnServer.rejected, (state, action) => {
+        state.isError = true;
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.message = action.error;
+      });
   },
 });
 

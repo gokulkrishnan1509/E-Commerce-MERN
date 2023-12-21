@@ -12,7 +12,7 @@ import { Link, useLocation } from "react-router-dom";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 
-import { getOrders, getUserOrderFromServer } from "../features/auth/authSlice";
+import { getAllUserOrderFromServer, getUserOrderFromServer } from "../features/auth/authSlice";
 
 const columns = [
   { title: "SNo", dataIndex: "key" },
@@ -23,26 +23,21 @@ const columns = [
   { title: "Color", dataIndex: "color" },
   { title: "Amount", dataIndex: "amount" },
   { title: "Date", dataIndex: "date" },
-  { title: "Action", dataIndex: "action" },
 ];
 
 const ViewOrder = () => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const userId = location.pathname.split("/")[3];
+  const orderId = location.pathname.split("/")[3];
 
   const { userOrder } = useSelector((state) => state.auth);
-  const products2 = userOrder?.products;
-
-  //  console.log(products2, "33333333")
-
   useEffect(() => {
-    dispatch(getUserOrderFromServer(userId));
-  }, [userId]);
+    dispatch(getUserOrderFromServer(orderId));
+  }, [orderId]);
 
   useEffect(() => {
     const timeOut = setTimeout(() => {
-      dispatch(getOrders());
+      dispatch(getAllUserOrderFromServer());
     }, 500);
     return () => {
       clearTimeout(timeOut);
@@ -51,25 +46,19 @@ const ViewOrder = () => {
 
   const data1 = [];
 
-  for (let i = 0; i < products2?.length; i++) {
+  for (let i = 0; i < userOrder?.orderItems?.length; i++) {
+
     data1.push({
       key: i + 1,
-      name: products2[i]?.product?.title,
-      brand: products2[i]?.product?.brand,
-      count: products2[i]?.count,
-      amount: products2[i]?.product?.price,
-      color: products2[i]?.color,
-      date: products2[i]?.product?.createdAt,
-      action: (
-        <>
-          <Link to="/" className="fs-3 text-danger">
-            <BiEdit />
-          </Link>
-          <Link to="/" className="ms-3 fs-3 text-danger">
-            <AiFillDelete />
-          </Link>
-        </>
-      ),
+    name: userOrder?.orderItems[i]?.product?.title,
+    brand:userOrder?.orderItems[i]?.product?.brand,
+    count:userOrder?.orderItems[i]?.quantity,
+    amount:userOrder?.orderItems[i]?.price,
+    color:userOrder?.orderItems[i]?.color?.title,
+    date :new Date(userOrder[i]?.createdAt).toLocaleDateString() 
+
+
+    
     });
   }
 

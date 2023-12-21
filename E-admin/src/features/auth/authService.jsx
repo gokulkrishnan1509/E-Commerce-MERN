@@ -26,21 +26,15 @@ const login = async (userData) => {
 
   return response.data;
 };
-const getOrder = async () => {
-  // console.log(getTokenFromLocalStorage.token);
-
-  const response = await axios.get(`${base_url}user/getall-orders`, config);
-  // console.log(response["data"]);
-  return response["data"];
-};
 
 const getUserOrder = async (id) => {
-  const response = await axios.post(
+  const response = await axios.get(
     `${base_url}user/getorderbyuser/${id}`,
-    "",
     config
   );
-  return response.data;
+  if (response.data) {
+    return response.data;
+  }
 };
 
 const getMonthlyOrder = async function () {
@@ -53,28 +47,43 @@ const getMonthlyOrder = async function () {
   }
 };
 
-const getYearlyStates = async function(){
-  const response = await axios.get(`${base_url}user/getYearlyTotalOrders`,config);
+const getYearlyStates = async function () {
+  const response = await axios.get(
+    `${base_url}user/getYearlyTotalOrders`,
+    config
+  );
 
-  if(response.data){
-    return response.data
+  if (response.data) {
+    return response.data;
   }
-}
+};
 
-const getAllOrder = async function(){
-  const response = await axios.get(`${base_url}user/getallorders`,config)
-  if(response.data){
-    return response.data
+const getAllOrder = async function () {
+  const response = await axios.get(`${base_url}user/getallorders`, config);
+  if (response.data) {
+    return response.data;
   }
-}
+};
+
+const updateUserOrder = async function (data) {
+  const response = await axios.patch(
+    `${base_url}user/updateOrder/${data.id}`,
+    {status:data.status},
+    config
+  );
+
+  if (response.data) {
+    return response.data;
+  }
+};
 
 const authService = {
   login,
-  getOrder,
   getUserOrder,
   getMonthlyOrder,
   getYearlyStates,
-  getAllOrder
+  getAllOrder,
+  updateUserOrder,
 };
 
 export default authService;
