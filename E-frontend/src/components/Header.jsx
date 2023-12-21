@@ -15,6 +15,7 @@ function Header() {
   const dispatch = useDispatch();
   const { getUserCartProduct } = useSelector((state) => state?.auth);
   const authState = useSelector((state) => state?.auth);
+  
   const { Products } = useSelector((state) => state?.product);
   // console.log(Products)
 
@@ -130,9 +131,8 @@ function Header() {
                     className="a d-flex align-items-center gap-10 text-white"
                   >
                     <img src={wishList} alt="wishlist" />
-                    <p className="mb-0">
+                    <p className="mb-0" style={{fontSize:"15px"}}>
                       Favourite
-                      <br />
                       wishlist
                     </p>
                   </Link>
@@ -149,7 +149,7 @@ function Header() {
                       </p>
                     ) : (
                       <p className="mb-0">
-                        {authState?.user?.data?.user?.name}
+                        {authState?.user?.name}
                       </p>
                     )}
                   </Link>

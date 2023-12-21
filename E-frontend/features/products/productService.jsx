@@ -14,7 +14,6 @@ import { config } from "../../src/utils/axiosConfig";
 
 const getProducts = async (data) => {
   try {
-    console.log(data);
     const queryParams = new URLSearchParams();
     if (data?.brand) {
       queryParams.append("brand", data?.brand);
@@ -66,7 +65,6 @@ const getSingleProduct = async (id) => {
 };
 
 const rateProduct = async (data) => {
-  console.log(data);
   const response = await axios.patch(`${base_url}product/rating`, data, config);
   if (response.data) {
     return response.data;

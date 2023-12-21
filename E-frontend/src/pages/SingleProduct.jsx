@@ -49,6 +49,8 @@ const SingleProduct = function () {
   }, [Products]);
   
 
+
+ 
   useEffect(() => {
     let timeOut = setTimeout(() => {
       dispatch(getAllProductsfromServer());
@@ -65,7 +67,7 @@ const SingleProduct = function () {
         setAlreadyAdded(true);
       }
     }
-  }, []);
+  }, [getUserCartProduct]);
 
   useEffect(() => {
     let timeOut = setTimeout(() => {

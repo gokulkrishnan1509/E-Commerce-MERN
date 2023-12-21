@@ -179,10 +179,6 @@ export const authSlice = createSlice({
         state.isSuccess = true;
         state.userLogged = action.payload;
         // localStorage.setItem("user", JSON.stringify(response.data));
-
-        if (state.isSuccess) {
-          localStorage.setItem("token", JSON.stringify(action.payload.token));
-        }
       })
       .addCase(loginToserver.rejected, (state, action) => {
         state.isLoading = false;
@@ -288,6 +284,18 @@ export const authSlice = createSlice({
         state.isSuccess = true;
         state.isLoading = false;
         state.updatedUserDetails = action?.payload;
+
+        let currentUserData = JSON.parse(localStorage.getItem("customer"));
+        let newUserData = {
+          _id: currentUserData?._id,
+          token: currentUserData?.token,
+          name: action?.payload?.user?.name,
+          email: action?.payload?.user?.email,
+          mobile: action?.payload?.user?.mobile,
+        };
+
+        localStorage.setItem("customer", JSON.stringify(newUserData));
+        // state.user=newUserData
       })
       .addCase(updateUserDetailsatServer.rejected, (state, action) => {
         state.isError = true;

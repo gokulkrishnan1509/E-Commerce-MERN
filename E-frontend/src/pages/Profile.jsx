@@ -12,21 +12,26 @@ const profileSchema = yup.object({
   mobile: yup.string().required("Mobile No is Required"),
 });
 
+
+
 const Profile = () => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state?.auth);
   const [edit, setEdit] = useState(true);
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      name: user["data"]?.user?.name,
-      email: user["data"]?.user.email,
-      mobile: user["data"]?.user?.mobile,
+      name: user?.name,
+      email: user?.email,
+      mobile: user?.mobile,
     },
     validationSchema: profileSchema,
     onSubmit: (values) => {
       dispatch(updateUserDetailsatServer(values));
       setEdit(true)
+      if(edit ===false){
+        window.location.reload()
+      }
     },
   });
   return (
