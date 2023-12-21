@@ -15,7 +15,7 @@ const columns = [
     defaultSortOrder: "descend",
     sorter: (a, b) => a.name.localeCompare(b.name),
   },
-  { title: "Product", dataIndex: "email" },
+  { title: "Email", dataIndex: "email" },
   { title: "Mobile", dataIndex: "mobile" },
 ];
 

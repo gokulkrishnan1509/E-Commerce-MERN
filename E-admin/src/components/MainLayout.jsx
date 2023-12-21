@@ -11,6 +11,7 @@ import {
   AiOutlineBgColors,
   AiOutlinePicRight,
   AiOutlinePicLeft,
+  AiOutlineLogout,
 } from "react-icons/ai";
 import { SiBrandfolder } from "react-icons/si";
 import { FaList } from "react-icons/fa";
@@ -57,7 +58,15 @@ const MainLayout = () => {
           defaultSelectedKeys={[""]}
           onClick={({ key }) => {
             if (key == "signout") {
-              navigate("/");
+             let data= localStorage.clear()
+
+
+            //  if this not working use this if condition
+            //  if(data ===undefined){
+              navigate("/")
+            //  }
+              window.location.reload()
+
             } else {
               navigate(key);
             }
@@ -173,7 +182,11 @@ const MainLayout = () => {
               key: "enquiries",
               icon: <CgUserList className="fs-4" />,
               label: "Enquiries",
-            },
+            },{
+              key:"signout",
+              icon:< AiOutlineLogout  className ="fs-4"/>,
+              label:"Sign Out"
+            }
           ]}
         />
       </Sider>
