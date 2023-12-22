@@ -29,16 +29,32 @@ import MainLayout from "./components/MainLayout";
 // **********************************Util's**************************
 import ViewEnq from "./utils/ViewEnquires";
 import ViewOrder from "./utils/ViewOrder";
+import { OpenRoutes } from "./Routing/OpenRoutes";
+import { PrivateRoutes } from "./Routing/PrivateRoutes";
 
 function App() {
   return (
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route
+            path="/"
+            element={
+              <OpenRoutes>
+                <Login />
+              </OpenRoutes>
+            }
+          />
           <Route path="reset-password" element={<Resetpassword />} />
           <Route path="forgot-password" element={<Forgotpassword />} />
-          <Route path="admin" element={<MainLayout />}>
+          <Route
+            path="admin"
+            element={
+              <PrivateRoutes>
+                <MainLayout />
+              </PrivateRoutes>
+            }
+          >
             <Route index element={<DashBoard />} />
             <Route path="blog-list" element={<Bloglist />} />
             <Route path="coupon-list" element={<Couponlist />} />

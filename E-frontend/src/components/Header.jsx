@@ -10,6 +10,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { Typeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import { getSingleProductFromServer } from "../../features/products/productSlice";
+// ******************* React Icons *******************
+import {
+  
+  AiOutlineLogout,
+} from "react-icons/ai";
+import { FaStore } from "react-icons/fa";
+import { AiFillDatabase } from "react-icons/ai";
+import { ImBlogger } from "react-icons/im";
+
+import { BsInfoCircleFill } from "react-icons/bs";
+
+import { ImHome } from "react-icons/im";
+
 
 function Header() {
   const dispatch = useDispatch();
@@ -191,7 +204,7 @@ function Header() {
                     >
                       <img src={menu} alt="menu-items" />
 
-                      <span className="me-5 ">Shop Catagories</span>
+                      <span className="me-5 fs-5 ">Shop Catagories</span>
                     </button>
                     <ul
                       className="dropdown-menu"
@@ -215,32 +228,44 @@ function Header() {
                     </ul>
                   </div>
                 </div>
-                <div className="menu-links">
-                  <div className="d-flex align-items-center gap-15  ">
+                <div className="menu-links w-100 d-flex align-items-center">
+                  <div className="d-flex align-items-center w-100 justify-content-evenly">
                     {/* NavLink is similar to (a tag) */}
                     <NavLink to="/" className="a">
-                      Home
+                      <ImHome  className="fs-4"/>
                     </NavLink>
                     <NavLink to="/product" className="a">
-                      Our Store
+                    <FaStore className="fs-4"/>
                     </NavLink>
                     <NavLink to="/my-orders" className="a">
-                      My Orders
+                    <AiFillDatabase className="fs-4" />
                     </NavLink>
                     <NavLink to="/blogs" className="a">
-                      Blogs
+                    <ImBlogger  className="fs-4"/>
                     </NavLink>
                     <NavLink to="/contact" className="a">
-                      Contact
+                    <BsInfoCircleFill  className="fs-4"/>
                     </NavLink>
-                    <button
-                      onClick={handleLogout}
-                      className="border border-0 bg-transparent text-white  text-uppercase"
-                      type="button"
-                    >
-                      Logout
-                    </button>
+                   
+                
                   </div>
+                  <div className="float-end w-100"> 
+                  <button
+                      onClick={handleLogout}
+                      className="border border-0 bg-transparent text-white  text-uppercase  float-end d-flex "
+                      type="button"
+                      >
+                        <div className="mb-0">
+                        < AiOutlineLogout  className ="fs-4"/>
+
+                        </div>
+                        <p className="ms-2 mb-0">
+
+                        Logout
+
+                        </p>
+                    </button>
+                      </div>
                 </div>
               </div>
             </div>
