@@ -60,7 +60,6 @@
 //   }
 
 //   const user = await userModel.findOne({ email }).select("+password");
-//   console.log(user);
 //   const isMatch = await user.comparePasswordInDb(password, user.password);
 //   if (!user || !isMatch) {
 //     const error = new CustomError("incorrect email or password", 400);
@@ -880,7 +879,6 @@
 //     .populate("orderby")
 //     .exec();
 //   res.json({ alluserOrders });
-//   console.log(userOrders);
 // });
 // ***************************************************************************
 // exports.updateOrderStatus = asyncErrorHanlder(async (req, res, next) => {

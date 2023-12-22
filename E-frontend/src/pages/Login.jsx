@@ -17,8 +17,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const authState = useSelector((state) => state.auth);
-  console.log(authState?.userLogged
-    )
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -33,7 +32,6 @@ const Login = () => {
     },
   });
 
-  // console.log(authState)
 
   useEffect(()=>{
      if((authState?.userLogged !==undefined )){

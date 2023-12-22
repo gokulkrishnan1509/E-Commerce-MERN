@@ -60,7 +60,6 @@ exports.login = asyncErrorHanlder(async (req, res, next) => {
   }
 
   const user = await userModel.findOne({ email }).select("+password");
-  console.log(user);
   const isMatch = await user.comparePasswordInDb(password, user.password);
   if (!user || !isMatch) {
     const error = new CustomError("incorrect email or password", 400);

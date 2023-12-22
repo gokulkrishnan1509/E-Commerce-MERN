@@ -133,7 +133,6 @@ export const categorySlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.getProuduct = action.payload.title;
-        // console.log(state.getProuduct)
       })
       .addCase(getProductCateServer.rejected, (state, action) => {
         state.isError = true;

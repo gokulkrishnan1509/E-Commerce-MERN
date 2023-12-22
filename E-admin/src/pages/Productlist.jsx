@@ -57,7 +57,6 @@ const columns = [
   { title: "Action", dataIndex: "action" },
 ];
 
-// console.log(products)
 const Productlist = function () {
   const dispatch = useDispatch();
 

@@ -17,7 +17,6 @@ function Header() {
   const authState = useSelector((state) => state?.auth);
   
   const { Products } = useSelector((state) => state?.product);
-  // console.log(Products)
 
   const [productOpt, setProductOpt] = useState([]);
   const navigate = useNavigate();

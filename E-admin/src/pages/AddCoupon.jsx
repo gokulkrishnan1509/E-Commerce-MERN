@@ -35,7 +35,6 @@ function AddCoupon() {
 
   
 
-  // console.log(formatDateForInput(dataCoupon?.expiry))
   useEffect(() => {
     if (getCouponId !== undefined) {
       dispatch(getOneCouponfromServer(getCouponId));

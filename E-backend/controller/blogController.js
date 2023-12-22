@@ -55,7 +55,6 @@ const getBlog = asyncErrorHanlder(async (req, res, next) => {
     { new: true }
   );
   res.json({ data: getBlog[0] });
-  // console.log(getBlog)
 });
 
 // ***********************************************************************

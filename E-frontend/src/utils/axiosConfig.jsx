@@ -3,7 +3,6 @@ const getTokenFromLocalStorage = localStorage.getItem("customer")
   : null;
 
 
-  // console.log(getTokenFromLocalStorage?.token)/
 
 export const config = {
   headers: {

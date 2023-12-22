@@ -40,7 +40,6 @@ function Orders() {
   const data1 = [];
 
   for (let i = 0; i < userOrders?.length; i++) {
-    // console.log(orders[i].)
     data1.push({
       Key: i + 1,
       name: userOrders[i]?.user?.name,

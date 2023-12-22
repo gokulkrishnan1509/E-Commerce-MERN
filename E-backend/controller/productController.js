@@ -155,7 +155,6 @@ exports.ratingfunc = asyncErrorHandler(async (req, res, next) => {
     { new: true }
   );
   res.status(200).json({ finalproduct });
-  // console.log(Math.round(9 / 2));
 });
 
 // exports.uploadImages = asyncErrorHandler(async (req, res) => {

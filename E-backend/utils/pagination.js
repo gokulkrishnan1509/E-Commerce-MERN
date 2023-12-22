@@ -11,7 +11,6 @@ class Apifeatures {
     excludeFields.forEach((data) => {
       delete this.queryObj[data];
     });
-    // console.log(queryObj)
     return this;
   }
 
